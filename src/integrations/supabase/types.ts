@@ -14,16 +14,231 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      attendance: {
+        Row: {
+          created_at: string | null
+          date: string
+          id: string
+          notes: string | null
+          status: Database["public"]["Enums"]["attendance_status"]
+          student_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          date?: string
+          id?: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["attendance_status"]
+          student_id: string
+        }
+        Update: {
+          created_at?: string | null
+          date?: string
+          id?: string
+          notes?: string | null
+          status?: Database["public"]["Enums"]["attendance_status"]
+          student_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      belt_tests: {
+        Row: {
+          created_at: string | null
+          id: string
+          notes: string | null
+          result: Database["public"]["Enums"]["test_result"]
+          student_id: string
+          test_date: string
+          test_fee: number
+          tested_for_belt: Database["public"]["Enums"]["belt_level"]
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          result?: Database["public"]["Enums"]["test_result"]
+          student_id: string
+          test_date: string
+          test_fee?: number
+          tested_for_belt: Database["public"]["Enums"]["belt_level"]
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          result?: Database["public"]["Enums"]["test_result"]
+          student_id?: string
+          test_date?: string
+          test_fee?: number
+          tested_for_belt?: Database["public"]["Enums"]["belt_level"]
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "belt_tests_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      monthly_fees: {
+        Row: {
+          amount: number
+          created_at: string | null
+          id: string
+          month: number
+          notes: string | null
+          paid_date: string | null
+          status: Database["public"]["Enums"]["payment_status"]
+          student_id: string
+          updated_at: string | null
+          year: number
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          id?: string
+          month: number
+          notes?: string | null
+          paid_date?: string | null
+          status?: Database["public"]["Enums"]["payment_status"]
+          student_id: string
+          updated_at?: string | null
+          year: number
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          id?: string
+          month?: number
+          notes?: string | null
+          paid_date?: string | null
+          status?: Database["public"]["Enums"]["payment_status"]
+          student_id?: string
+          updated_at?: string | null
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "monthly_fees_student_id_fkey"
+            columns: ["student_id"]
+            isOneToOne: false
+            referencedRelation: "students"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      students: {
+        Row: {
+          address: string | null
+          admission_date: string
+          age: number
+          created_at: string | null
+          current_belt: Database["public"]["Enums"]["belt_level"]
+          gender: Database["public"]["Enums"]["gender_type"]
+          guardian_name: string
+          id: string
+          is_active: boolean | null
+          name: string
+          phone_number: string
+          profile_photo_url: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          address?: string | null
+          admission_date?: string
+          age: number
+          created_at?: string | null
+          current_belt?: Database["public"]["Enums"]["belt_level"]
+          gender: Database["public"]["Enums"]["gender_type"]
+          guardian_name: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          phone_number: string
+          profile_photo_url?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          address?: string | null
+          admission_date?: string
+          age?: number
+          created_at?: string | null
+          current_belt?: Database["public"]["Enums"]["belt_level"]
+          gender?: Database["public"]["Enums"]["gender_type"]
+          guardian_name?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          phone_number?: string
+          profile_photo_url?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "instructor" | "viewer"
+      attendance_status: "present" | "absent" | "late"
+      belt_level:
+        | "white"
+        | "yellow"
+        | "green"
+        | "blue"
+        | "red"
+        | "black_1st_dan"
+        | "black_2nd_dan"
+        | "black_3rd_dan"
+        | "black_4th_dan"
+        | "black_5th_dan"
+      gender_type: "male" | "female" | "other"
+      payment_status: "paid" | "unpaid" | "partial"
+      test_result: "passed" | "failed" | "pending"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +365,24 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "instructor", "viewer"],
+      attendance_status: ["present", "absent", "late"],
+      belt_level: [
+        "white",
+        "yellow",
+        "green",
+        "blue",
+        "red",
+        "black_1st_dan",
+        "black_2nd_dan",
+        "black_3rd_dan",
+        "black_4th_dan",
+        "black_5th_dan",
+      ],
+      gender_type: ["male", "female", "other"],
+      payment_status: ["paid", "unpaid", "partial"],
+      test_result: ["passed", "failed", "pending"],
+    },
   },
 } as const
