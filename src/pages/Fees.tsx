@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, XCircle, DollarSign } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { Database } from "@/integrations/supabase/types";
 
 const Fees = () => {
   const [fees, setFees] = useState<any[]>([]);
@@ -66,7 +67,7 @@ const Fees = () => {
           month: selectedMonth,
           year: selectedYear,
           amount: 50, // Default fee amount
-          status: "unpaid",
+          status: "unpaid" as Database['public']['Enums']['payment_status'],
         }));
 
       if (missingFees.length > 0 && isAdmin) {
@@ -87,7 +88,7 @@ const Fees = () => {
     }
   };
 
-  const updateFeeStatus = async (feeId: string, status: string, amount: number) => {
+  const updateFeeStatus = async (feeId: string, status: Database['public']['Enums']['payment_status'], amount: number) => {
     if (!isAdmin) return;
 
     try {
@@ -266,7 +267,7 @@ const Fees = () => {
                     {isAdmin && (
                       <Select
                         value={fee.status}
-                        onValueChange={(value) => updateFeeStatus(fee.id, value, fee.amount)}
+                        onValueChange={(value) => updateFeeStatus(fee.id, value as Database['public']['Enums']['payment_status'], fee.amount)}
                       >
                         <SelectTrigger className="w-32">
                           <SelectValue />

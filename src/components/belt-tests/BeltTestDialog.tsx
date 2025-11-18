@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Database } from "@/integrations/supabase/types";
 
 const BeltTestDialog = ({ open, test, students, onClose }: any) => {
   const [formData, setFormData] = useState({ student_id: "", test_date: new Date().toISOString().split("T")[0], tested_for_belt: "yellow", test_fee: "50", result: "pending", notes: "" });
@@ -22,7 +23,12 @@ const BeltTestDialog = ({ open, test, students, onClose }: any) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const data = { ...formData, test_fee: parseFloat(formData.test_fee) };
+      const data = { 
+        ...formData, 
+        test_fee: parseFloat(formData.test_fee),
+        result: formData.result as Database['public']['Enums']['test_result'],
+        tested_for_belt: formData.tested_for_belt as Database['public']['Enums']['belt_level']
+      };
       if (test) {
         const { error } = await supabase.from("belt_tests").update(data).eq("id", test.id);
         if (error) throw error;
