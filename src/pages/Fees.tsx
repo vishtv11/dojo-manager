@@ -66,7 +66,7 @@ const Fees = () => {
           student_id: s.id,
           month: selectedMonth,
           year: selectedYear,
-          amount: 50, // Default fee amount
+          amount: 700, // Default fee amount
           status: "unpaid" as Database['public']['Enums']['payment_status'],
         }));
 
@@ -162,7 +162,7 @@ const Fees = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Total Amount</p>
-                <p className="text-2xl font-bold">${totalAmount.toFixed(2)}</p>
+                <p className="text-2xl font-bold">₹{totalAmount.toFixed(2)}</p>
               </div>
               <div className="p-3 bg-blue-100 rounded-lg">
                 <DollarSign className="h-6 w-6 text-blue-600" />
@@ -176,7 +176,7 @@ const Fees = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted-foreground">Collected</p>
-                <p className="text-2xl font-bold text-green-600">${paidAmount.toFixed(2)}</p>
+                <p className="text-2xl font-bold text-green-600">₹{paidAmount.toFixed(2)}</p>
               </div>
               <div className="p-3 bg-green-100 rounded-lg">
                 <CheckCircle className="h-6 w-6 text-green-600" />
@@ -256,7 +256,7 @@ const Fees = () => {
                   <div className="flex-1">
                     <h3 className="font-semibold">{student.name}</h3>
                     <p className="text-sm text-muted-foreground">
-                      Amount: ${parseFloat(fee.amount).toFixed(2)}
+                      Amount: ₹{parseFloat(fee.amount).toFixed(2)}
                       {fee.paid_date && ` • Paid on ${new Date(fee.paid_date).toLocaleDateString()}`}
                     </p>
                   </div>
