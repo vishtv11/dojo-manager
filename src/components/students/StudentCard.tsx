@@ -73,44 +73,44 @@ const StudentCard = ({ student, onEdit, onDelete }: StudentCardProps) => {
   };
 
   return (
-    <Card className="shadow-card hover:shadow-elevated transition-shadow">
-      <CardContent className="p-6">
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <Avatar className="h-16 w-16">
+    <Card className="shadow-card hover:shadow-elevated transition-shadow h-full flex flex-col">
+      <CardContent className="p-4 sm:p-6 flex-1 flex flex-col">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <Avatar className="h-12 w-12 sm:h-16 sm:w-16 flex-shrink-0">
               <AvatarImage src={student.profile_photo_url} />
-              <AvatarFallback className="bg-primary text-primary-foreground text-lg">
+              <AvatarFallback className="bg-primary text-primary-foreground text-base sm:text-lg">
                 {student.name.charAt(0)}
               </AvatarFallback>
             </Avatar>
-            <div>
-              <h3 className="font-semibold text-lg">{student.name}</h3>
-              <p className="text-sm text-muted-foreground">
+            <div className="min-w-0 flex-1">
+              <h3 className="font-semibold text-base sm:text-lg truncate">{student.name}</h3>
+              <p className="text-xs sm:text-sm text-muted-foreground">
                 {student.age} years • {student.gender}
               </p>
             </div>
           </div>
           <Badge
-            className={getBeltColor(student.current_belt)}
+            className={`${getBeltColor(student.current_belt)} flex-shrink-0 self-start`}
             variant="secondary"
           >
             {formatBeltName(student.current_belt)}
           </Badge>
         </div>
 
-        <div className="space-y-2 text-sm">
+        <div className="space-y-2 text-xs sm:text-sm flex-1">
           <div className="flex items-center gap-2 text-muted-foreground">
-            <Phone className="h-4 w-4" />
-            <span>{student.phone_number}</span>
+            <Phone className="h-4 w-4 flex-shrink-0" />
+            <span className="truncate">{student.phone_number}</span>
           </div>
           {student.address && (
-            <div className="flex items-center gap-2 text-muted-foreground">
-              <MapPin className="h-4 w-4" />
-              <span className="truncate">{student.address}</span>
+            <div className="flex items-start gap-2 text-muted-foreground">
+              <MapPin className="h-4 w-4 flex-shrink-0 mt-0.5" />
+              <span className="line-clamp-2 break-words">{student.address}</span>
             </div>
           )}
           <p className="text-muted-foreground">
-            Guardian: <span className="font-medium">{student.guardian_name}</span>
+            Guardian: <span className="font-medium break-words">{student.guardian_name}</span>
           </p>
           <p className="text-muted-foreground">
             Joined: {new Date(student.admission_date).toLocaleDateString()}
@@ -118,20 +118,20 @@ const StudentCard = ({ student, onEdit, onDelete }: StudentCardProps) => {
         </div>
 
         {isAdmin && (
-          <div className="flex gap-2 mt-4">
+          <div className="flex gap-2 mt-4 pt-4 border-t">
             <Button
               variant="outline"
               size="sm"
-              className="flex-1"
+              className="flex-1 text-xs sm:text-sm"
               onClick={() => onEdit(student)}
             >
-              <Edit className="h-4 w-4 mr-1" />
-              Edit
+              <Edit className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+              <span className="hidden xs:inline">Edit</span>
             </Button>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="outline" size="sm" className="text-destructive">
-                  <Trash2 className="h-4 w-4" />
+                <Button variant="outline" size="sm" className="text-destructive px-3">
+                  <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>

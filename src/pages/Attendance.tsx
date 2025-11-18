@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { Calendar as CalendarIcon, Check, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { Database } from "@/integrations/supabase/types";
 
 const Attendance = () => {
   const [students, setStudents] = useState<any[]>([]);
@@ -71,7 +72,7 @@ const Attendance = () => {
     }
   };
 
-  const markAttendance = async (studentId: string, status: string) => {
+  const markAttendance = async (studentId: string, status: Database['public']['Enums']['attendance_status']) => {
     if (!isAdmin) return;
 
     try {

@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { Database } from "@/integrations/supabase/types";
 
 export const signUp = async (email: string, password: string) => {
   const redirectUrl = `${window.location.origin}/`;
@@ -28,7 +29,7 @@ export const signOut = async () => {
   return { error };
 };
 
-export const checkUserRole = async (userId: string, role: string) => {
+export const checkUserRole = async (userId: string, role: Database['public']['Enums']['app_role']) => {
   const { data, error } = await supabase
     .from('user_roles')
     .select('role')

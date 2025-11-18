@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Upload } from "lucide-react";
 import { z } from "zod";
+import { Database } from "@/integrations/supabase/types";
 
 interface StudentDialogProps {
   open: boolean;
@@ -101,7 +102,13 @@ const StudentDialog = ({ open, student, onClose }: StudentDialogProps) => {
       }
 
       const studentData = {
-        ...validatedData,
+        name: validatedData.name,
+        age: validatedData.age,
+        gender: validatedData.gender,
+        guardian_name: validatedData.guardian_name,
+        phone_number: validatedData.phone_number,
+        address: validatedData.address,
+        current_belt: formData.current_belt as Database['public']['Enums']['belt_level'],
         admission_date: formData.admission_date,
         profile_photo_url: photoUrl,
         is_active: true,
