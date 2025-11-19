@@ -92,7 +92,7 @@ const Fees = () => {
     if (!isAdmin) return;
 
     try {
-      const updateData: any = { status };
+      const updateData: any = { status, amount };
       if (status === "paid") {
         updateData.paid_date = new Date().toISOString().split("T")[0];
       }
@@ -135,10 +135,18 @@ const Fees = () => {
 
   const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - 2 + i);
 
-  const totalAmount = fees.reduce((sum, fee) => sum + parseFloat(fee.amount || 0), 0);
+  const totalAmount = fees.reduce((sum, fee) => {
+    const student = students.find((s) => s.id === fee.student_id);
+    const amount = student?.fee_structure === '4_classes_1000' ? 1000 : 700;
+    return sum + amount;
+  }, 0);
   const paidAmount = fees
     .filter((f) => f.status === "paid")
-    .reduce((sum, fee) => sum + parseFloat(fee.amount || 0), 0);
+    .reduce((sum, fee) => {
+      const student = students.find((s) => s.id === fee.student_id);
+      const amount = student?.fee_structure === '4_classes_1000' ? 1000 : 700;
+      return sum + amount;
+    }, 0);
   const unpaidCount = fees.filter((f) => f.status === "unpaid").length;
 
   if (loading && fees.length === 0) {
@@ -248,6 +256,8 @@ const Fees = () => {
               const student = students.find((s) => s.id === fee.student_id);
               if (!student) return null;
 
+              const feeAmount = student.fee_structure === '4_classes_1000' ? 1000 : 700;
+              
               return (
                 <div
                   key={fee.id}
@@ -256,7 +266,7 @@ const Fees = () => {
                   <div className="flex-1">
                     <h3 className="font-semibold">{student.name}</h3>
                     <p className="text-sm text-muted-foreground">
-                      Amount: ₹{parseFloat(fee.amount).toFixed(2)}
+                      Amount: ₹{feeAmount.toFixed(2)}
                       {fee.paid_date && ` • Paid on ${new Date(fee.paid_date).toLocaleDateString()}`}
                     </p>
                   </div>
@@ -267,7 +277,7 @@ const Fees = () => {
                     {isAdmin && (
                       <Select
                         value={fee.status}
-                        onValueChange={(value) => updateFeeStatus(fee.id, value as Database['public']['Enums']['payment_status'], fee.amount)}
+                        onValueChange={(value) => updateFeeStatus(fee.id, value as Database['public']['Enums']['payment_status'], feeAmount)}
                       >
                         <SelectTrigger className="w-32">
                           <SelectValue />
