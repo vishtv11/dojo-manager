@@ -147,6 +147,8 @@ export type Database = {
           age: number
           created_at: string | null
           current_belt: Database["public"]["Enums"]["belt_level"]
+          date_of_birth: string
+          fee_structure: Database["public"]["Enums"]["fee_structure"]
           gender: Database["public"]["Enums"]["gender_type"]
           guardian_name: string
           id: string
@@ -162,6 +164,8 @@ export type Database = {
           age: number
           created_at?: string | null
           current_belt?: Database["public"]["Enums"]["belt_level"]
+          date_of_birth?: string
+          fee_structure?: Database["public"]["Enums"]["fee_structure"]
           gender: Database["public"]["Enums"]["gender_type"]
           guardian_name: string
           id?: string
@@ -177,6 +181,8 @@ export type Database = {
           age?: number
           created_at?: string | null
           current_belt?: Database["public"]["Enums"]["belt_level"]
+          date_of_birth?: string
+          fee_structure?: Database["public"]["Enums"]["fee_structure"]
           gender?: Database["public"]["Enums"]["gender_type"]
           guardian_name?: string
           id?: string
@@ -236,6 +242,7 @@ export type Database = {
         | "black_3rd_dan"
         | "black_4th_dan"
         | "black_5th_dan"
+      fee_structure: "2_classes_700" | "4_classes_1000"
       gender_type: "male" | "female" | "other"
       payment_status: "paid" | "unpaid" | "partial"
       test_result: "passed" | "failed" | "pending"
@@ -380,6 +387,7 @@ export const Constants = {
         "black_4th_dan",
         "black_5th_dan",
       ],
+      fee_structure: ["2_classes_700", "4_classes_1000"],
       gender_type: ["male", "female", "other"],
       payment_status: ["paid", "unpaid", "partial"],
       test_result: ["passed", "failed", "pending"],

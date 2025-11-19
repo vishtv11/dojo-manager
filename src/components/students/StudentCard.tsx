@@ -115,6 +115,14 @@ const StudentCard = ({ student, onEdit, onDelete }: StudentCardProps) => {
           <p className="text-muted-foreground">
             Joined: {new Date(student.admission_date).toLocaleDateString()}
           </p>
+          <p className="text-muted-foreground">
+            DOB: {new Date(student.date_of_birth).toLocaleDateString('en-GB')}
+          </p>
+          <p className="text-muted-foreground">
+            Fee: <span className="font-medium">
+              {student.fee_structure === '2_classes_700' ? '2 classes/week - ₹700' : '4 classes/week - ₹1000'}
+            </span>
+          </p>
         </div>
 
         {isAdmin && (
