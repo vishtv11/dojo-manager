@@ -66,7 +66,7 @@ const Fees = () => {
           student_id: s.id,
           month: selectedMonth,
           year: selectedYear,
-          amount: 700, // Default fee amount
+          amount: s.fee_structure === '4_classes_1000' ? 1000 : 700,
           status: "unpaid" as Database['public']['Enums']['payment_status'],
         }));
 

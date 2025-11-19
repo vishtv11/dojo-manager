@@ -25,6 +25,8 @@ const studentSchema = z.object({
   phone_number: z.string().trim().min(1, "Phone number is required").max(20),
   address: z.string().max(500).optional(),
   current_belt: z.string(),
+  fee_structure: z.enum(["2_classes_700", "4_classes_1000"]),
+  date_of_birth: z.string().min(1, "Date of birth is required"),
 });
 
 const StudentDialog = ({ open, student, onClose }: StudentDialogProps) => {
@@ -37,6 +39,8 @@ const StudentDialog = ({ open, student, onClose }: StudentDialogProps) => {
     address: "",
     current_belt: "white",
     admission_date: new Date().toISOString().split("T")[0],
+    fee_structure: "2_classes_700",
+    date_of_birth: "",
   });
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
@@ -53,6 +57,8 @@ const StudentDialog = ({ open, student, onClose }: StudentDialogProps) => {
         address: student.address || "",
         current_belt: student.current_belt || "white",
         admission_date: student.admission_date || new Date().toISOString().split("T")[0],
+        fee_structure: student.fee_structure || "2_classes_700",
+        date_of_birth: student.date_of_birth || "",
       });
     } else {
       setFormData({
@@ -64,6 +70,8 @@ const StudentDialog = ({ open, student, onClose }: StudentDialogProps) => {
         address: "",
         current_belt: "white",
         admission_date: new Date().toISOString().split("T")[0],
+        fee_structure: "2_classes_700",
+        date_of_birth: "",
       });
     }
     setPhotoFile(null);
@@ -112,6 +120,8 @@ const StudentDialog = ({ open, student, onClose }: StudentDialogProps) => {
         admission_date: formData.admission_date,
         profile_photo_url: photoUrl,
         is_active: true,
+        fee_structure: validatedData.fee_structure as Database['public']['Enums']['fee_structure'],
+        date_of_birth: validatedData.date_of_birth,
       };
 
       if (student) {
@@ -276,6 +286,32 @@ const StudentDialog = ({ open, student, onClose }: StudentDialogProps) => {
               onChange={(e) => setFormData({ ...formData, admission_date: e.target.value })}
               required
             />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="date_of_birth">Date of Birth *</Label>
+              <Input
+                id="date_of_birth"
+                type="date"
+                value={formData.date_of_birth}
+                onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="fee_structure">Fee Structure *</Label>
+              <Select value={formData.fee_structure} onValueChange={(value) => setFormData({ ...formData, fee_structure: value })}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="2_classes_700">2 classes/week - ₹700</SelectItem>
+                  <SelectItem value="4_classes_1000">4 classes/week - ₹1000</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="space-y-2">
