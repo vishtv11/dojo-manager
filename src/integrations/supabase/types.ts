@@ -152,10 +152,13 @@ export type Database = {
           gender: Database["public"]["Enums"]["gender_type"]
           guardian_name: string
           id: string
+          instructor_name: string | null
           is_active: boolean | null
           name: string
           phone_number: string
           profile_photo_url: string | null
+          state: string | null
+          tai_certification_number: string | null
           updated_at: string | null
         }
         Insert: {
@@ -169,10 +172,13 @@ export type Database = {
           gender: Database["public"]["Enums"]["gender_type"]
           guardian_name: string
           id?: string
+          instructor_name?: string | null
           is_active?: boolean | null
           name: string
           phone_number: string
           profile_photo_url?: string | null
+          state?: string | null
+          tai_certification_number?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -186,10 +192,13 @@ export type Database = {
           gender?: Database["public"]["Enums"]["gender_type"]
           guardian_name?: string
           id?: string
+          instructor_name?: string | null
           is_active?: boolean | null
           name?: string
           phone_number?: string
           profile_photo_url?: string | null
+          state?: string | null
+          tai_certification_number?: string | null
           updated_at?: string | null
         }
         Relationships: []

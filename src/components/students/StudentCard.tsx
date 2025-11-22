@@ -134,9 +134,24 @@ const StudentCard = ({ student, onEdit, onDelete }: StudentCardProps) => {
           <p className="text-muted-foreground">
             Guardian: <span className="font-medium break-words">{student.guardian_name}</span>
           </p>
+          {student.state && (
+            <p className="text-muted-foreground">
+              State: <span className="font-medium">{student.state}</span>
+            </p>
+          )}
           <p className="text-muted-foreground">
             Joined: {new Date(student.admission_date).toLocaleDateString()}
           </p>
+          {student.tai_certification_number && (
+            <p className="text-muted-foreground">
+              TAI Cert: <span className="font-medium">{student.tai_certification_number}</span>
+            </p>
+          )}
+          {student.instructor_name && (
+            <p className="text-muted-foreground">
+              Instructor: <span className="font-medium">{student.instructor_name}</span>
+            </p>
+          )}
           <p className="text-muted-foreground">
             DOB: {new Date(student.date_of_birth).toLocaleDateString('en-GB')}
           </p>
