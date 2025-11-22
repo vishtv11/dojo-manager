@@ -18,6 +18,27 @@ const Attendance = () => {
   const { toast } = useToast();
   const { isAdmin } = useAuth();
 
+  const formatBeltName = (belt: string) => {
+    const beltMap: Record<string, string> = {
+      white: "White",
+      yellow_stripe: "Yellow Stripe",
+      yellow: "Yellow",
+      green_stripe: "Green Stripe",
+      green: "Green",
+      blue_stripe: "Blue Stripe",
+      blue: "Blue",
+      red_stripe: "Red Stripe",
+      red: "Red",
+      red_black: "Red Black",
+      black_1st_dan: "Black 1st Dan",
+      black_2nd_dan: "Black 2nd Dan",
+      black_3rd_dan: "Black 3rd Dan",
+      black_4th_dan: "Black 4th Dan",
+      black_5th_dan: "Black 5th Dan",
+    };
+    return beltMap[belt] || belt.replace(/_/g, " ").replace(/\b\w/g, (l: string) => l.toUpperCase());
+  };
+
   useEffect(() => {
     fetchStudents();
   }, []);
@@ -271,7 +292,7 @@ const Attendance = () => {
                     <div>
                       <h3 className="font-semibold">{student.name}</h3>
                       <p className="text-sm text-muted-foreground">
-                        {student.current_belt.replace(/_/g, " ").replace(/\b\w/g, (l: string) => l.toUpperCase())}
+                        {formatBeltName(student.current_belt)}
                       </p>
                     </div>
                   </div>

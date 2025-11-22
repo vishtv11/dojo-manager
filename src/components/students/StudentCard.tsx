@@ -31,10 +31,15 @@ const StudentCard = ({ student, onEdit, onDelete }: StudentCardProps) => {
   const getBeltColor = (belt: string) => {
     const colors: Record<string, string> = {
       white: "bg-gray-200 text-gray-800",
+      yellow_stripe: "bg-yellow-300 text-yellow-900",
       yellow: "bg-yellow-400 text-yellow-900",
+      green_stripe: "bg-green-400 text-white",
       green: "bg-green-500 text-white",
+      blue_stripe: "bg-blue-400 text-white",
       blue: "bg-blue-500 text-white",
+      red_stripe: "bg-red-400 text-white",
       red: "bg-red-500 text-white",
+      red_black: "bg-gradient-to-r from-red-600 to-gray-900 text-white",
       black_1st_dan: "bg-gray-900 text-white",
       black_2nd_dan: "bg-gray-900 text-white",
       black_3rd_dan: "bg-gray-900 text-white",
@@ -45,7 +50,24 @@ const StudentCard = ({ student, onEdit, onDelete }: StudentCardProps) => {
   };
 
   const formatBeltName = (belt: string) => {
-    return belt.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
+    const beltMap: Record<string, string> = {
+      white: "White",
+      yellow_stripe: "Yellow Stripe",
+      yellow: "Yellow",
+      green_stripe: "Green Stripe",
+      green: "Green",
+      blue_stripe: "Blue Stripe",
+      blue: "Blue",
+      red_stripe: "Red Stripe",
+      red: "Red",
+      red_black: "Red Black",
+      black_1st_dan: "Black 1st Dan",
+      black_2nd_dan: "Black 2nd Dan",
+      black_3rd_dan: "Black 3rd Dan",
+      black_4th_dan: "Black 4th Dan",
+      black_5th_dan: "Black 5th Dan",
+    };
+    return beltMap[belt] || belt.replace(/_/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
   };
 
   const handleDelete = async () => {

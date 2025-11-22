@@ -27,6 +27,27 @@ const BeltTestCard = ({ test, student, onEdit, onDelete }: any) => {
     return styles[result as keyof typeof styles];
   };
 
+  const formatBeltName = (belt: string) => {
+    const beltMap: Record<string, string> = {
+      white: "White",
+      yellow_stripe: "Yellow Stripe",
+      yellow: "Yellow",
+      green_stripe: "Green Stripe",
+      green: "Green",
+      blue_stripe: "Blue Stripe",
+      blue: "Blue",
+      red_stripe: "Red Stripe",
+      red: "Red",
+      red_black: "Red Black",
+      black_1st_dan: "Black 1st Dan",
+      black_2nd_dan: "Black 2nd Dan",
+      black_3rd_dan: "Black 3rd Dan",
+      black_4th_dan: "Black 4th Dan",
+      black_5th_dan: "Black 5th Dan",
+    };
+    return beltMap[belt] || belt.replace(/_/g, " ").replace(/\b\w/g, (l: string) => l.toUpperCase());
+  };
+
   return (
     <Card className="shadow-card hover:shadow-elevated transition-shadow">
       <CardContent className="p-6">
@@ -43,7 +64,7 @@ const BeltTestCard = ({ test, student, onEdit, onDelete }: any) => {
           </Badge>
         </div>
         <div className="space-y-2 text-sm">
-          <p className="flex items-center gap-2"><Award className="h-4 w-4 text-primary" />Testing for: {test.tested_for_belt.replace(/_/g, " ").replace(/\b\w/g, (l: string) => l.toUpperCase())}</p>
+          <p className="flex items-center gap-2"><Award className="h-4 w-4 text-primary" />Testing for: {formatBeltName(test.tested_for_belt)}</p>
           <p className="text-muted-foreground">Fee: ${parseFloat(test.test_fee).toFixed(2)}</p>
           {test.notes && <p className="text-muted-foreground text-xs">{test.notes}</p>}
         </div>

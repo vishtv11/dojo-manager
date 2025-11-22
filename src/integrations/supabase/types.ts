@@ -242,6 +242,11 @@ export type Database = {
         | "black_3rd_dan"
         | "black_4th_dan"
         | "black_5th_dan"
+        | "yellow_stripe"
+        | "green_stripe"
+        | "blue_stripe"
+        | "red_stripe"
+        | "red_black"
       fee_structure: "2_classes_700" | "4_classes_1000"
       gender_type: "male" | "female" | "other"
       payment_status: "paid" | "unpaid" | "partial"
@@ -386,6 +391,11 @@ export const Constants = {
         "black_3rd_dan",
         "black_4th_dan",
         "black_5th_dan",
+        "yellow_stripe",
+        "green_stripe",
+        "blue_stripe",
+        "red_stripe",
+        "red_black",
       ],
       fee_structure: ["2_classes_700", "4_classes_1000"],
       gender_type: ["male", "female", "other"],
