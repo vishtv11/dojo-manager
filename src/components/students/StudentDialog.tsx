@@ -24,7 +24,10 @@ const studentSchema = z.object({
   guardian_name: z.string().trim().min(1, "Guardian name is required").max(100),
   phone_number: z.string().trim().min(1, "Phone number is required").max(20),
   address: z.string().max(500).optional(),
+  state: z.string().trim().min(1, "State is required").max(100),
   current_belt: z.string(),
+  tai_certification_number: z.string().trim().regex(/^[A-Za-z0-9-]*$/, "Only letters, numbers, and hyphens allowed").max(20, "Maximum 20 characters").optional(),
+  instructor_name: z.string().trim().regex(/^[A-Za-z\s]*$/, "Only letters and spaces allowed").max(100).optional(),
   fee_structure: z.enum(["2_classes_700", "4_classes_1000"]),
   date_of_birth: z.string().min(1, "Date of birth is required"),
 });
@@ -37,8 +40,11 @@ const StudentDialog = ({ open, student, onClose }: StudentDialogProps) => {
     guardian_name: "",
     phone_number: "",
     address: "",
+    state: "",
     current_belt: "white",
     admission_date: new Date().toISOString().split("T")[0],
+    tai_certification_number: "",
+    instructor_name: "",
     fee_structure: "2_classes_700",
     date_of_birth: "",
   });
@@ -55,8 +61,11 @@ const StudentDialog = ({ open, student, onClose }: StudentDialogProps) => {
         guardian_name: student.guardian_name || "",
         phone_number: student.phone_number || "",
         address: student.address || "",
+        state: student.state || "",
         current_belt: student.current_belt || "white",
         admission_date: student.admission_date || new Date().toISOString().split("T")[0],
+        tai_certification_number: student.tai_certification_number || "",
+        instructor_name: student.instructor_name || "",
         fee_structure: student.fee_structure || "2_classes_700",
         date_of_birth: student.date_of_birth || "",
       });
@@ -68,8 +77,11 @@ const StudentDialog = ({ open, student, onClose }: StudentDialogProps) => {
         guardian_name: "",
         phone_number: "",
         address: "",
+        state: "",
         current_belt: "white",
         admission_date: new Date().toISOString().split("T")[0],
+        tai_certification_number: "",
+        instructor_name: "",
         fee_structure: "2_classes_700",
         date_of_birth: "",
       });
@@ -116,8 +128,11 @@ const StudentDialog = ({ open, student, onClose }: StudentDialogProps) => {
         guardian_name: validatedData.guardian_name,
         phone_number: validatedData.phone_number,
         address: validatedData.address,
+        state: validatedData.state,
         current_belt: formData.current_belt as Database['public']['Enums']['belt_level'],
         admission_date: formData.admission_date,
+        tai_certification_number: validatedData.tai_certification_number || null,
+        instructor_name: validatedData.instructor_name || null,
         profile_photo_url: photoUrl,
         is_active: true,
         fee_structure: validatedData.fee_structure as Database['public']['Enums']['fee_structure'],
@@ -179,30 +194,15 @@ const StudentDialog = ({ open, student, onClose }: StudentDialogProps) => {
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Name *</Label>
-              <Input
-                id="name"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                maxLength={100}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="age">Age *</Label>
-              <Input
-                id="age"
-                type="number"
-                min="1"
-                max="99"
-                value={formData.age}
-                onChange={(e) => setFormData({ ...formData, age: e.target.value })}
-                required
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="name">Name *</Label>
+            <Input
+              id="name"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              maxLength={100}
+              required
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -221,54 +221,37 @@ const StudentDialog = ({ open, student, onClose }: StudentDialogProps) => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="current_belt">Current Belt *</Label>
-              <Select value={formData.current_belt} onValueChange={(value) => setFormData({ ...formData, current_belt: value })}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="white">White</SelectItem>
-                  <SelectItem value="yellow_stripe">Yellow Stripe</SelectItem>
-                  <SelectItem value="yellow">Yellow</SelectItem>
-                  <SelectItem value="green_stripe">Green Stripe</SelectItem>
-                  <SelectItem value="green">Green</SelectItem>
-                  <SelectItem value="blue_stripe">Blue Stripe</SelectItem>
-                  <SelectItem value="blue">Blue</SelectItem>
-                  <SelectItem value="red_stripe">Red Stripe</SelectItem>
-                  <SelectItem value="red">Red</SelectItem>
-                  <SelectItem value="red_black">Red Black</SelectItem>
-                  <SelectItem value="black_1st_dan">Black 1st Dan</SelectItem>
-                  <SelectItem value="black_2nd_dan">Black 2nd Dan</SelectItem>
-                  <SelectItem value="black_3rd_dan">Black 3rd Dan</SelectItem>
-                  <SelectItem value="black_4th_dan">Black 4th Dan</SelectItem>
-                  <SelectItem value="black_5th_dan">Black 5th Dan</SelectItem>
-                </SelectContent>
-              </Select>
+              <Label htmlFor="date_of_birth">Date of Birth *</Label>
+              <Input
+                id="date_of_birth"
+                type="date"
+                value={formData.date_of_birth}
+                onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
+                required
+              />
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="guardian_name">Guardian Name *</Label>
-              <Input
-                id="guardian_name"
-                value={formData.guardian_name}
-                onChange={(e) => setFormData({ ...formData, guardian_name: e.target.value })}
-                maxLength={100}
-                required
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="guardian_name">Guardian/Parent Name *</Label>
+            <Input
+              id="guardian_name"
+              value={formData.guardian_name}
+              onChange={(e) => setFormData({ ...formData, guardian_name: e.target.value })}
+              maxLength={100}
+              required
+            />
+          </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="phone_number">Phone Number *</Label>
-              <Input
-                id="phone_number"
-                value={formData.phone_number}
-                onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })}
-                maxLength={20}
-                required
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="phone_number">Phone Number *</Label>
+            <Input
+              id="phone_number"
+              value={formData.phone_number}
+              onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })}
+              maxLength={20}
+              required
+            />
           </div>
 
           <div className="space-y-2">
@@ -282,41 +265,119 @@ const StudentDialog = ({ open, student, onClose }: StudentDialogProps) => {
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="admission_date">Admission Date *</Label>
-            <Input
-              id="admission_date"
-              type="date"
-              value={formData.admission_date}
-              onChange={(e) => setFormData({ ...formData, admission_date: e.target.value })}
-              required
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="state">State *</Label>
+              <Select value={formData.state} onValueChange={(value) => setFormData({ ...formData, state: value })}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select state" />
+                </SelectTrigger>
+                <SelectContent className="bg-popover">
+                  <SelectItem value="Andhra Pradesh">Andhra Pradesh</SelectItem>
+                  <SelectItem value="Arunachal Pradesh">Arunachal Pradesh</SelectItem>
+                  <SelectItem value="Assam">Assam</SelectItem>
+                  <SelectItem value="Bihar">Bihar</SelectItem>
+                  <SelectItem value="Chhattisgarh">Chhattisgarh</SelectItem>
+                  <SelectItem value="Goa">Goa</SelectItem>
+                  <SelectItem value="Gujarat">Gujarat</SelectItem>
+                  <SelectItem value="Haryana">Haryana</SelectItem>
+                  <SelectItem value="Himachal Pradesh">Himachal Pradesh</SelectItem>
+                  <SelectItem value="Jharkhand">Jharkhand</SelectItem>
+                  <SelectItem value="Karnataka">Karnataka</SelectItem>
+                  <SelectItem value="Kerala">Kerala</SelectItem>
+                  <SelectItem value="Madhya Pradesh">Madhya Pradesh</SelectItem>
+                  <SelectItem value="Maharashtra">Maharashtra</SelectItem>
+                  <SelectItem value="Manipur">Manipur</SelectItem>
+                  <SelectItem value="Meghalaya">Meghalaya</SelectItem>
+                  <SelectItem value="Mizoram">Mizoram</SelectItem>
+                  <SelectItem value="Nagaland">Nagaland</SelectItem>
+                  <SelectItem value="Odisha">Odisha</SelectItem>
+                  <SelectItem value="Punjab">Punjab</SelectItem>
+                  <SelectItem value="Rajasthan">Rajasthan</SelectItem>
+                  <SelectItem value="Sikkim">Sikkim</SelectItem>
+                  <SelectItem value="Tamil Nadu">Tamil Nadu</SelectItem>
+                  <SelectItem value="Telangana">Telangana</SelectItem>
+                  <SelectItem value="Tripura">Tripura</SelectItem>
+                  <SelectItem value="Uttar Pradesh">Uttar Pradesh</SelectItem>
+                  <SelectItem value="Uttarakhand">Uttarakhand</SelectItem>
+                  <SelectItem value="West Bengal">West Bengal</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="admission_date">Admission Date *</Label>
+              <Input
+                id="admission_date"
+                type="date"
+                value={formData.admission_date}
+                onChange={(e) => setFormData({ ...formData, admission_date: e.target.value })}
+                required
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="date_of_birth">Date of Birth *</Label>
+              <Label htmlFor="tai_certification_number">TAI Certification Number</Label>
               <Input
-                id="date_of_birth"
-                type="date"
-                value={formData.date_of_birth}
-                onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
-                required
+                id="tai_certification_number"
+                value={formData.tai_certification_number}
+                onChange={(e) => setFormData({ ...formData, tai_certification_number: e.target.value })}
+                maxLength={20}
+                placeholder="e.g., TAI12345"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="fee_structure">Fee Structure *</Label>
-              <Select value={formData.fee_structure} onValueChange={(value) => setFormData({ ...formData, fee_structure: value })}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="2_classes_700">2 classes/week - ₹700</SelectItem>
-                  <SelectItem value="4_classes_1000">4 classes/week - ₹1000</SelectItem>
-                </SelectContent>
-              </Select>
+              <Label htmlFor="instructor_name">Instructor Name</Label>
+              <Input
+                id="instructor_name"
+                value={formData.instructor_name}
+                onChange={(e) => setFormData({ ...formData, instructor_name: e.target.value })}
+                maxLength={100}
+                placeholder="e.g., John Doe"
+              />
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="current_belt">Current Belt & Level *</Label>
+            <Select value={formData.current_belt} onValueChange={(value) => setFormData({ ...formData, current_belt: value })}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-popover">
+                <SelectItem value="white">White</SelectItem>
+                <SelectItem value="yellow_stripe">Yellow Stripe</SelectItem>
+                <SelectItem value="yellow">Yellow</SelectItem>
+                <SelectItem value="green_stripe">Green Stripe</SelectItem>
+                <SelectItem value="green">Green</SelectItem>
+                <SelectItem value="blue_stripe">Blue Stripe</SelectItem>
+                <SelectItem value="blue">Blue</SelectItem>
+                <SelectItem value="red_stripe">Red Stripe</SelectItem>
+                <SelectItem value="red">Red</SelectItem>
+                <SelectItem value="red_black">Red Black</SelectItem>
+                <SelectItem value="black_1st_dan">Black 1st Dan</SelectItem>
+                <SelectItem value="black_2nd_dan">Black 2nd Dan</SelectItem>
+                <SelectItem value="black_3rd_dan">Black 3rd Dan</SelectItem>
+                <SelectItem value="black_4th_dan">Black 4th Dan</SelectItem>
+                <SelectItem value="black_5th_dan">Black 5th Dan</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="fee_structure">Fee Structure *</Label>
+            <Select value={formData.fee_structure} onValueChange={(value) => setFormData({ ...formData, fee_structure: value })}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-popover">
+                <SelectItem value="2_classes_700">2 classes/week - ₹700</SelectItem>
+                <SelectItem value="4_classes_1000">4 classes/week - ₹1000</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-2">
