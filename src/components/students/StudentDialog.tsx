@@ -228,10 +228,15 @@ const StudentDialog = ({ open, student, onClose }: StudentDialogProps) => {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="white">White</SelectItem>
+                  <SelectItem value="yellow_stripe">Yellow Stripe</SelectItem>
                   <SelectItem value="yellow">Yellow</SelectItem>
+                  <SelectItem value="green_stripe">Green Stripe</SelectItem>
                   <SelectItem value="green">Green</SelectItem>
+                  <SelectItem value="blue_stripe">Blue Stripe</SelectItem>
                   <SelectItem value="blue">Blue</SelectItem>
+                  <SelectItem value="red_stripe">Red Stripe</SelectItem>
                   <SelectItem value="red">Red</SelectItem>
+                  <SelectItem value="red_black">Red Black</SelectItem>
                   <SelectItem value="black_1st_dan">Black 1st Dan</SelectItem>
                   <SelectItem value="black_2nd_dan">Black 2nd Dan</SelectItem>
                   <SelectItem value="black_3rd_dan">Black 3rd Dan</SelectItem>
