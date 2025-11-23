@@ -93,9 +93,18 @@ const StudentDialog = ({ open, student, onClose }: StudentDialogProps) => {
     e.preventDefault();
 
     try {
+      // Calculate age from date of birth
+      const birthDate = new Date(formData.date_of_birth);
+      const today = new Date();
+      let calculatedAge = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        calculatedAge--;
+      }
+
       const validatedData = studentSchema.parse({
         ...formData,
-        age: parseInt(formData.age),
+        age: calculatedAge,
       });
 
       setLoading(true);
