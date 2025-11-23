@@ -14,6 +14,7 @@ const Attendance = () => {
   const [students, setStudents] = useState<any[]>([]);
   const [attendance, setAttendance] = useState<Map<string, string>>(new Map());
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split("T")[0]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { toast } = useToast();
@@ -186,6 +187,11 @@ const Attendance = () => {
     );
   };
 
+  // Filter students based on search term
+  const filteredStudents = students.filter((student) =>
+    student.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const presentCount = Array.from(attendance.values()).filter(s => s === "present").length;
   const absentCount = Array.from(attendance.values()).filter(s => s === "absent").length;
   const lateCount = Array.from(attendance.values()).filter(s => s === "late").length;
@@ -277,11 +283,25 @@ const Attendance = () => {
 
       <Card className="shadow-card">
         <CardHeader>
-          <CardTitle>Mark Attendance</CardTitle>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <CardTitle>Mark Attendance</CardTitle>
+            <Input
+              type="text"
+              placeholder="Search student name..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="max-w-xs"
+            />
+          </div>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {students.map((student) => {
+            {filteredStudents.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                No students found matching "{searchTerm}"
+              </div>
+            ) : (
+              filteredStudents.map((student) => {
               const status = attendance.get(student.id);
 
               return (
@@ -336,7 +356,7 @@ const Attendance = () => {
                   </div>
                 </div>
               );
-            })}
+            }))}
           </div>
         </CardContent>
       </Card>
