@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Calendar as CalendarIcon, Check, X } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Database } from "@/integrations/supabase/types";
+import { ExportAttendanceDialog } from "@/components/attendance/ExportAttendanceDialog";
 
 const Attendance = () => {
   const [students, setStudents] = useState<any[]>([]);
@@ -255,7 +256,7 @@ const Attendance = () => {
           <CardTitle>Select Date</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-4 items-center">
+          <div className="flex flex-wrap gap-4 items-center">
             <Input
               type="date"
               value={selectedDate}
@@ -263,9 +264,12 @@ const Attendance = () => {
               className="max-w-xs"
             />
             {isAdmin && (
-              <Button onClick={markAllPresent} disabled={saving} variant="outline">
-                {saving ? "Saving..." : "Mark All Present"}
-              </Button>
+              <>
+                <Button onClick={markAllPresent} disabled={saving} variant="outline">
+                  {saving ? "Saving..." : "Mark All Present"}
+                </Button>
+                <ExportAttendanceDialog students={students} />
+              </>
             )}
           </div>
         </CardContent>
