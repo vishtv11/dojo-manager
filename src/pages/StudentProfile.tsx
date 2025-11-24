@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, User, Phone, MapPin, Calendar, Award, GraduationCap } from "lucide-react";
+import { ArrowLeft, User, Phone, MapPin, Calendar, Award, GraduationCap, Save } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -32,6 +32,8 @@ const StudentProfile = () => {
   const [attendanceData, setAttendanceData] = useState<any[]>([]);
   const [feeData, setFeeData] = useState<any[]>([]);
   const [beltTests, setBeltTests] = useState<any[]>([]);
+  const [editingCertNumber, setEditingCertNumber] = useState<Record<string, string>>({});
+  const [savingCertNumber, setSavingCertNumber] = useState<Record<string, boolean>>({});
   const [attendanceStats, setAttendanceStats] = useState({
     present: 0,
     absent: 0,
@@ -111,6 +113,13 @@ const StudentProfile = () => {
 
       if (testError) throw testError;
       setBeltTests(testData || []);
+      
+      // Initialize editing state with current certification numbers
+      const certNumbers: Record<string, string> = {};
+      testData?.forEach((test) => {
+        certNumbers[test.id] = test.certification_number || "";
+      });
+      setEditingCertNumber(certNumbers);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -170,6 +179,50 @@ const StudentProfile = () => {
       "July", "August", "September", "October", "November", "December"
     ];
     return months[month - 1];
+  };
+
+  const handleCertNumberChange = (testId: string, value: string) => {
+    // Validate: alphanumeric and hyphens only, max 20 chars
+    const sanitized = value.slice(0, 20).replace(/[^a-zA-Z0-9-]/g, "");
+    setEditingCertNumber((prev) => ({
+      ...prev,
+      [testId]: sanitized,
+    }));
+  };
+
+  const handleSaveCertNumber = async (testId: string) => {
+    try {
+      setSavingCertNumber((prev) => ({ ...prev, [testId]: true }));
+      
+      const { error } = await supabase
+        .from("belt_tests")
+        .update({ certification_number: editingCertNumber[testId] || null })
+        .eq("id", testId);
+
+      if (error) throw error;
+
+      // Update local state
+      setBeltTests((prev) =>
+        prev.map((test) =>
+          test.id === testId
+            ? { ...test, certification_number: editingCertNumber[testId] }
+            : test
+        )
+      );
+
+      toast({
+        title: "Success",
+        description: "Certification number updated successfully",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to update certification number",
+        variant: "destructive",
+      });
+    } finally {
+      setSavingCertNumber((prev) => ({ ...prev, [testId]: false }));
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -536,20 +589,21 @@ const StudentProfile = () => {
               <TableHeader>
                 <TableRow>
                   <TableHead>Belt Level</TableHead>
-                  <TableHead>Certification Number</TableHead>
                   <TableHead>Date Issued</TableHead>
                   <TableHead>Result</TableHead>
+                  <TableHead>Certification Number</TableHead>
+                  <TableHead className="w-24">Action</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {passedTests.length === 0 ? (
+                {beltTests.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={4} className="text-center text-muted-foreground">
-                      No certification records found
+                    <TableCell colSpan={5} className="text-center text-muted-foreground">
+                      No belt test records found
                     </TableCell>
                   </TableRow>
                 ) : (
-                  passedTests.map((test) => (
+                  beltTests.map((test) => (
                     <TableRow key={test.id}>
                       <TableCell>
                         <Badge
@@ -558,9 +612,6 @@ const StudentProfile = () => {
                         >
                           {formatBeltName(test.tested_for_belt)}
                         </Badge>
-                      </TableCell>
-                      <TableCell>
-                        {test.certification_number || "-"}
                       </TableCell>
                       <TableCell>
                         {new Date(test.test_date).toLocaleDateString('en-GB')}
@@ -572,6 +623,25 @@ const StudentProfile = () => {
                         >
                           {test.result.charAt(0).toUpperCase() + test.result.slice(1)}
                         </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <input
+                          type="text"
+                          value={editingCertNumber[test.id] || ""}
+                          onChange={(e) => handleCertNumberChange(test.id, e.target.value)}
+                          placeholder="Enter cert number"
+                          className="w-full px-2 py-1 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-background"
+                          maxLength={20}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          size="sm"
+                          onClick={() => handleSaveCertNumber(test.id)}
+                          disabled={savingCertNumber[test.id]}
+                        >
+                          {savingCertNumber[test.id] ? "Saving..." : "Save"}
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))
