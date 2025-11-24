@@ -6,6 +6,7 @@ import { Edit, Trash2, Phone, MapPin } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,6 +28,7 @@ interface StudentCardProps {
 const StudentCard = ({ student, onEdit, onDelete }: StudentCardProps) => {
   const { toast } = useToast();
   const { isAdmin } = useAuth();
+  const navigate = useNavigate();
 
   const getBeltColor = (belt: string) => {
     const colors: Record<string, string> = {
@@ -95,7 +97,10 @@ const StudentCard = ({ student, onEdit, onDelete }: StudentCardProps) => {
   };
 
   return (
-    <Card className="shadow-card hover:shadow-elevated transition-shadow h-full flex flex-col">
+    <Card 
+      className="shadow-card hover:shadow-elevated transition-shadow h-full flex flex-col cursor-pointer"
+      onClick={() => navigate(`/students/${student.id}`)}
+    >
       <CardContent className="p-4 sm:p-6 flex-1 flex flex-col">
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
           <div className="flex items-center gap-3 min-w-0 flex-1">
@@ -168,14 +173,22 @@ const StudentCard = ({ student, onEdit, onDelete }: StudentCardProps) => {
               variant="outline"
               size="sm"
               className="flex-1 text-xs sm:text-sm"
-              onClick={() => onEdit(student)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(student);
+              }}
             >
               <Edit className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
               <span className="hidden xs:inline">Edit</span>
             </Button>
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="outline" size="sm" className="text-destructive px-3">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="text-destructive px-3"
+                  onClick={(e) => e.stopPropagation()}
+                >
                   <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                 </Button>
               </AlertDialogTrigger>

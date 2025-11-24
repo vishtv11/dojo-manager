@@ -8,6 +8,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import Layout from "@/components/Layout";
 import Dashboard from "./pages/Dashboard";
 import Students from "./pages/Students";
+import StudentProfile from "./pages/StudentProfile";
 import Fees from "./pages/Fees";
 import Attendance from "./pages/Attendance";
 import BeltTests from "./pages/BeltTests";
@@ -27,6 +28,7 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/" element={<ProtectedRoute><Layout><Dashboard /></Layout></ProtectedRoute>} />
             <Route path="/students" element={<ProtectedRoute><Layout><Students /></Layout></ProtectedRoute>} />
+            <Route path="/students/:id" element={<ProtectedRoute><Layout><StudentProfile /></Layout></ProtectedRoute>} />
             <Route path="/fees" element={<ProtectedRoute><Layout><Fees /></Layout></ProtectedRoute>} />
             <Route path="/attendance" element={<ProtectedRoute><Layout><Attendance /></Layout></ProtectedRoute>} />
             <Route path="/belt-tests" element={<ProtectedRoute><Layout><BeltTests /></Layout></ProtectedRoute>} />
