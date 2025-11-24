@@ -51,6 +51,7 @@ export type Database = {
       }
       belt_tests: {
         Row: {
+          certification_number: string | null
           created_at: string | null
           id: string
           notes: string | null
@@ -62,6 +63,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          certification_number?: string | null
           created_at?: string | null
           id?: string
           notes?: string | null
@@ -73,6 +75,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          certification_number?: string | null
           created_at?: string | null
           id?: string
           notes?: string | null
