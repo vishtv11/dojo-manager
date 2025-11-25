@@ -74,21 +74,21 @@ const BeltTests = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Belt Tests</h1>
-          <p className="text-muted-foreground">Schedule and track belt promotion tests</p>
+          <h1 className="text-2xl sm:text-3xl font-bold">Belt Tests</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">Schedule and track belt promotion tests</p>
         </div>
         {isAdmin && (
-          <Button onClick={handleAdd} className="gap-2">
+          <Button onClick={handleAdd} className="gap-2 w-full sm:w-auto">
             <Plus className="h-4 w-4" />
             Schedule Test
           </Button>
         )}
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         <Card className="shadow-card">
           <CardContent className="p-6">
             <div>
@@ -120,9 +120,9 @@ const BeltTests = () => {
       </div>
 
       {upcomingTests.length > 0 && (
-        <div className="space-y-4">
-          <h2 className="text-2xl font-bold">Upcoming Tests</h2>
-          <div className="grid gap-4 md:grid-cols-2">
+        <div className="space-y-3 sm:space-y-4">
+          <h2 className="text-xl sm:text-2xl font-bold">Upcoming Tests</h2>
+          <div className="grid gap-3 sm:gap-4 grid-cols-1 lg:grid-cols-2">
             {upcomingTests.map((test) => {
               const student = students.find((s) => s.id === test.student_id);
               return (
@@ -140,9 +140,9 @@ const BeltTests = () => {
       )}
 
       {pastTests.length > 0 && (
-        <div className="space-y-4">
-          <h2 className="text-2xl font-bold">Past Tests</h2>
-          <div className="grid gap-4 md:grid-cols-2">
+        <div className="space-y-3 sm:space-y-4">
+          <h2 className="text-xl sm:text-2xl font-bold">Past Tests</h2>
+          <div className="grid gap-3 sm:gap-4 grid-cols-1 lg:grid-cols-2">
             {pastTests.map((test) => {
               const student = students.find((s) => s.id === test.student_id);
               return (

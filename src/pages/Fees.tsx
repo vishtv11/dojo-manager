@@ -158,13 +158,13 @@ const Fees = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Monthly Fees</h1>
-        <p className="text-muted-foreground">Track and manage student fee payments</p>
+        <h1 className="text-2xl sm:text-3xl font-bold">Monthly Fees</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">Track and manage student fee payments</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         <Card className="shadow-card">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -210,10 +210,10 @@ const Fees = () => {
 
       <Card className="shadow-card">
         <CardHeader>
-          <CardTitle>Filter by Month & Year</CardTitle>
+          <CardTitle className="text-lg sm:text-xl">Filter by Month & Year</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2">
             <div>
               <Select value={selectedMonth.toString()} onValueChange={(value) => setSelectedMonth(parseInt(value))}>
                 <SelectTrigger>
@@ -248,10 +248,10 @@ const Fees = () => {
 
       <Card className="shadow-card">
         <CardHeader>
-          <CardTitle>Fee Records</CardTitle>
+          <CardTitle className="text-lg sm:text-xl">Fee Records</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {fees.map((fee) => {
               const student = students.find((s) => s.id === fee.student_id);
               if (!student) return null;
@@ -261,16 +261,16 @@ const Fees = () => {
               return (
                 <div
                   key={fee.id}
-                  className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-accent/10 transition-colors"
+                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 sm:p-4 border border-border rounded-lg hover:bg-accent/10 transition-colors"
                 >
-                  <div className="flex-1">
-                    <h3 className="font-semibold">{student.name}</h3>
-                    <p className="text-sm text-muted-foreground">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-sm sm:text-base truncate">{student.name}</h3>
+                    <p className="text-xs sm:text-sm text-muted-foreground">
                       Amount: ₹{feeAmount.toFixed(2)}
                       {fee.paid_date && ` • Paid on ${new Date(fee.paid_date).toLocaleDateString()}`}
                     </p>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
                     <Badge className={getStatusBadge(fee.status)} variant="outline">
                       {fee.status.charAt(0).toUpperCase() + fee.status.slice(1)}
                     </Badge>
@@ -279,7 +279,7 @@ const Fees = () => {
                         value={fee.status}
                         onValueChange={(value) => updateFeeStatus(fee.id, value as Database['public']['Enums']['payment_status'], feeAmount)}
                       >
-                        <SelectTrigger className="w-32">
+                        <SelectTrigger className="w-full sm:w-32">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>

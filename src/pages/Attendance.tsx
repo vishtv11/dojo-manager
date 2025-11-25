@@ -205,13 +205,13 @@ const Attendance = () => {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <div>
-        <h1 className="text-3xl font-bold">Attendance</h1>
-        <p className="text-muted-foreground">Mark and track student attendance</p>
+        <h1 className="text-2xl sm:text-3xl font-bold">Attendance</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">Mark and track student attendance</p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
         <Card className="shadow-card">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -259,19 +259,19 @@ const Attendance = () => {
 
       <Card className="shadow-card">
         <CardHeader>
-          <CardTitle>Select Date</CardTitle>
+          <CardTitle className="text-lg sm:text-xl">Select Date</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-4 items-center">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 items-stretch sm:items-center">
             <Input
               type="date"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              className="max-w-xs"
+              className="w-full sm:max-w-xs"
             />
             {isAdmin && (
               <>
-                <Button onClick={markAllPresent} disabled={saving} variant="outline">
+                <Button onClick={markAllPresent} disabled={saving} variant="outline" className="w-full sm:w-auto">
                   {saving ? "Saving..." : "Mark All Present"}
                 </Button>
                 <ExportAttendanceDialog students={students} />
@@ -283,14 +283,14 @@ const Attendance = () => {
 
       <Card className="shadow-card">
         <CardHeader>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <CardTitle>Mark Attendance</CardTitle>
+          <div className="flex flex-col gap-3 sm:gap-4">
+            <CardTitle className="text-lg sm:text-xl">Mark Attendance</CardTitle>
             <Input
               type="text"
               placeholder="Search student name..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="max-w-xs"
+              className="w-full sm:max-w-xs"
             />
           </div>
         </CardHeader>
@@ -307,49 +307,53 @@ const Attendance = () => {
               return (
                 <div
                   key={student.id}
-                  className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-accent/10 transition-colors"
+                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 p-3 sm:p-4 border border-border rounded-lg hover:bg-accent/10 transition-colors"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-semibold">
+                    <div className="h-10 w-10 flex-shrink-0 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-semibold text-sm">
                       {student.name.charAt(0)}
                     </div>
-                    <div>
-                      <h3 className="font-semibold">{student.name}</h3>
-                      <p className="text-sm text-muted-foreground">
+                    <div className="min-w-0 flex-1">
+                      <h3 className="font-semibold text-sm sm:text-base truncate">{student.name}</h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground">
                         {formatBeltName(student.current_belt)}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3">
-                    {getStatusBadge(status)}
+                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+                    <div className="sm:hidden">{getStatusBadge(status)}</div>
+                    <div className="hidden sm:block">{getStatusBadge(status)}</div>
                     {isAdmin && (
                       <div className="flex gap-2">
                         <Button
                           size="sm"
                           variant={status === "present" ? "default" : "outline"}
                           onClick={() => markAttendance(student.id, "present")}
-                          className="gap-1"
+                          className="gap-1 flex-1 sm:flex-none"
                         >
-                          <Check className="h-4 w-4" />
-                          Present
+                          <Check className="h-3 w-3 sm:h-4 sm:w-4" />
+                          <span className="hidden sm:inline">Present</span>
+                          <span className="sm:hidden">P</span>
                         </Button>
                         <Button
                           size="sm"
                           variant={status === "absent" ? "destructive" : "outline"}
                           onClick={() => markAttendance(student.id, "absent")}
-                          className="gap-1"
+                          className="gap-1 flex-1 sm:flex-none"
                         >
-                          <X className="h-4 w-4" />
-                          Absent
+                          <X className="h-3 w-3 sm:h-4 sm:w-4" />
+                          <span className="hidden sm:inline">Absent</span>
+                          <span className="sm:hidden">A</span>
                         </Button>
                         <Button
                           size="sm"
                           variant={status === "late" ? "secondary" : "outline"}
                           onClick={() => markAttendance(student.id, "late")}
-                          className="gap-1"
+                          className="gap-1 flex-1 sm:flex-none"
                         >
-                          Late
+                          <span className="hidden sm:inline">Late</span>
+                          <span className="sm:hidden">L</span>
                         </Button>
                       </div>
                     )}

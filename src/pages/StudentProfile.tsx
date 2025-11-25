@@ -262,16 +262,16 @@ const StudentProfile = () => {
   const passedTests = beltTests.filter((test) => test.result === "passed");
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header with Back Button */}
-      <div className="flex items-center gap-4">
-        <Button variant="outline" size="sm" onClick={() => navigate("/students")}>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+        <Button variant="outline" size="sm" onClick={() => navigate("/students")} className="w-full sm:w-auto">
           <ArrowLeft className="h-4 w-4 mr-2" />
           Back to Students
         </Button>
         <div className="flex-1">
-          <h1 className="text-3xl font-bold">Student Profile</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl sm:text-3xl font-bold">Student Profile</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground">
             Students → {student.name} → Profile
           </p>
         </div>
@@ -280,97 +280,97 @@ const StudentProfile = () => {
       {/* Basic Information Card */}
       <Card className="shadow-card">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
             <User className="h-5 w-5" />
             Basic Information
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-col md:flex-row gap-6">
-            <div className="flex flex-col items-center gap-4">
-              <Avatar className="h-32 w-32">
+          <div className="flex flex-col md:flex-row gap-4 sm:gap-6">
+            <div className="flex flex-col items-center gap-3 sm:gap-4">
+              <Avatar className="h-24 w-24 sm:h-32 sm:w-32">
                 <AvatarImage src={student.profile_photo_url} />
-                <AvatarFallback className="bg-primary text-primary-foreground text-3xl">
+                <AvatarFallback className="bg-primary text-primary-foreground text-2xl sm:text-3xl">
                   {student.name.charAt(0)}
                 </AvatarFallback>
               </Avatar>
-              <Badge className={`${getBeltColor(student.current_belt)} text-base px-4 py-1`}>
+              <Badge className={`${getBeltColor(student.current_belt)} text-sm sm:text-base px-3 sm:px-4 py-1`}>
                 {formatBeltName(student.current_belt)}
               </Badge>
             </div>
-            <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
               <div>
-                <p className="text-sm text-muted-foreground">Student Name</p>
-                <p className="font-semibold text-lg">{student.name}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">Student Name</p>
+                <p className="font-semibold text-base sm:text-lg break-words">{student.name}</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Gender</p>
-                <p className="font-semibold capitalize">{student.gender}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">Gender</p>
+                <p className="font-semibold text-sm sm:text-base capitalize">{student.gender}</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Date of Birth</p>
-                <p className="font-semibold">
+                <p className="text-xs sm:text-sm text-muted-foreground">Date of Birth</p>
+                <p className="font-semibold text-sm sm:text-base">
                   {new Date(student.date_of_birth).toLocaleDateString('en-GB')}
                 </p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Age</p>
-                <p className="font-semibold">{student.age} years</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">Age</p>
+                <p className="font-semibold text-sm sm:text-base">{student.age} years</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground flex items-center gap-2">
-                  <Phone className="h-4 w-4" />
+                <p className="text-xs sm:text-sm text-muted-foreground flex items-center gap-2">
+                  <Phone className="h-3 w-3 sm:h-4 sm:w-4" />
                   Phone Number
                 </p>
-                <p className="font-semibold">{student.phone_number}</p>
+                <p className="font-semibold text-sm sm:text-base">{student.phone_number}</p>
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Guardian Name</p>
-                <p className="font-semibold">{student.guardian_name}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">Guardian Name</p>
+                <p className="font-semibold text-sm sm:text-base break-words">{student.guardian_name}</p>
               </div>
-              <div className="md:col-span-2">
-                <p className="text-sm text-muted-foreground flex items-center gap-2">
-                  <MapPin className="h-4 w-4" />
+              <div className="sm:col-span-2">
+                <p className="text-xs sm:text-sm text-muted-foreground flex items-center gap-2">
+                  <MapPin className="h-3 w-3 sm:h-4 sm:w-4" />
                   Address
                 </p>
-                <p className="font-semibold">{student.address || "Not provided"}</p>
+                <p className="font-semibold text-sm sm:text-base break-words">{student.address || "Not provided"}</p>
               </div>
               {student.state && (
                 <div>
-                  <p className="text-sm text-muted-foreground">State</p>
-                  <p className="font-semibold">{student.state}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">State</p>
+                  <p className="font-semibold text-sm sm:text-base">{student.state}</p>
                 </div>
               )}
               <div>
-                <p className="text-sm text-muted-foreground flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
+                <p className="text-xs sm:text-sm text-muted-foreground flex items-center gap-2">
+                  <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
                   Admission Date
                 </p>
-                <p className="font-semibold">
+                <p className="font-semibold text-sm sm:text-base">
                   {new Date(student.admission_date).toLocaleDateString('en-GB')}
                 </p>
               </div>
               {student.instructor_name && (
                 <div>
-                  <p className="text-sm text-muted-foreground flex items-center gap-2">
-                    <GraduationCap className="h-4 w-4" />
+                  <p className="text-xs sm:text-sm text-muted-foreground flex items-center gap-2">
+                    <GraduationCap className="h-3 w-3 sm:h-4 sm:w-4" />
                     Instructor Name
                   </p>
-                  <p className="font-semibold">{student.instructor_name}</p>
+                  <p className="font-semibold text-sm sm:text-base">{student.instructor_name}</p>
                 </div>
               )}
               {student.tai_certification_number && (
                 <div>
-                  <p className="text-sm text-muted-foreground flex items-center gap-2">
-                    <Award className="h-4 w-4" />
+                  <p className="text-xs sm:text-sm text-muted-foreground flex items-center gap-2">
+                    <Award className="h-3 w-3 sm:h-4 sm:w-4" />
                     Latest TAI Certification
                   </p>
-                  <p className="font-semibold">{student.tai_certification_number}</p>
+                  <p className="font-semibold text-sm sm:text-base break-all">{student.tai_certification_number}</p>
                 </div>
               )}
               <div>
-                <p className="text-sm text-muted-foreground">Fee Structure</p>
-                <p className="font-semibold">
+                <p className="text-xs sm:text-sm text-muted-foreground">Fee Structure</p>
+                <p className="font-semibold text-sm sm:text-base">
                   {student.fee_structure === '2_classes_700' 
                     ? '2 classes/week - ₹700' 
                     : '4 classes/week - ₹1000'}
@@ -384,43 +384,43 @@ const StudentProfile = () => {
       {/* Attendance Overview */}
       <Card className="shadow-card">
         <CardHeader>
-          <CardTitle>Attendance Overview</CardTitle>
+          <CardTitle className="text-lg sm:text-xl">Attendance Overview</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-            <div className="text-center p-4 rounded-lg bg-green-500/10">
-              <p className="text-2xl font-bold text-green-700 dark:text-green-400">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div className="text-center p-3 sm:p-4 rounded-lg bg-green-500/10">
+              <p className="text-xl sm:text-2xl font-bold text-green-700 dark:text-green-400">
                 {attendanceStats.present}
               </p>
-              <p className="text-sm text-muted-foreground">Present Days</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">Present Days</p>
             </div>
-            <div className="text-center p-4 rounded-lg bg-red-500/10">
-              <p className="text-2xl font-bold text-red-700 dark:text-red-400">
+            <div className="text-center p-3 sm:p-4 rounded-lg bg-red-500/10">
+              <p className="text-xl sm:text-2xl font-bold text-red-700 dark:text-red-400">
                 {attendanceStats.absent}
               </p>
-              <p className="text-sm text-muted-foreground">Absent Days</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">Absent Days</p>
             </div>
-            <div className="text-center p-4 rounded-lg bg-blue-500/10">
-              <p className="text-2xl font-bold text-blue-700 dark:text-blue-400">
+            <div className="text-center p-3 sm:p-4 rounded-lg bg-blue-500/10">
+              <p className="text-xl sm:text-2xl font-bold text-blue-700 dark:text-blue-400">
                 {attendanceStats.total}
               </p>
-              <p className="text-sm text-muted-foreground">Total Classes</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">Total Classes</p>
             </div>
-            <div className="text-center p-4 rounded-lg bg-primary/10">
-              <p className="text-2xl font-bold text-primary">
+            <div className="text-center p-3 sm:p-4 rounded-lg bg-primary/10">
+              <p className="text-xl sm:text-2xl font-bold text-primary">
                 {attendanceStats.percentage.toFixed(2)}%
               </p>
-              <p className="text-sm text-muted-foreground">Attendance Rate</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">Attendance Rate</p>
             </div>
           </div>
 
           <Collapsible>
-            <CollapsibleTrigger className="flex items-center gap-2 font-semibold text-sm mb-2 hover:text-primary">
+            <CollapsibleTrigger className="flex items-center gap-2 font-semibold text-xs sm:text-sm mb-2 hover:text-primary">
               <ChevronDown className="h-4 w-4" />
               Attendance History
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <div className="border rounded-lg overflow-hidden">
+              <div className="border rounded-lg overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -467,37 +467,37 @@ const StudentProfile = () => {
       {/* Fee Details Section */}
       <Card className="shadow-card">
         <CardHeader>
-          <CardTitle>Fee Summary</CardTitle>
+          <CardTitle className="text-lg sm:text-xl">Fee Summary</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="text-center p-4 rounded-lg bg-green-500/10">
-              <p className="text-2xl font-bold text-green-700 dark:text-green-400">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div className="text-center p-3 sm:p-4 rounded-lg bg-green-500/10">
+              <p className="text-xl sm:text-2xl font-bold text-green-700 dark:text-green-400">
                 ₹{feeStats.totalPaid.toFixed(2)}
               </p>
-              <p className="text-sm text-muted-foreground">Total Paid</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">Total Paid</p>
             </div>
-            <div className="text-center p-4 rounded-lg bg-red-500/10">
-              <p className="text-2xl font-bold text-red-700 dark:text-red-400">
+            <div className="text-center p-3 sm:p-4 rounded-lg bg-red-500/10">
+              <p className="text-xl sm:text-2xl font-bold text-red-700 dark:text-red-400">
                 ₹{feeStats.totalPending.toFixed(2)}
               </p>
-              <p className="text-sm text-muted-foreground">Total Pending</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">Total Pending</p>
             </div>
-            <div className="text-center p-4 rounded-lg bg-blue-500/10">
-              <p className="text-2xl font-bold text-blue-700 dark:text-blue-400">
+            <div className="text-center p-3 sm:p-4 rounded-lg bg-blue-500/10 sm:col-span-2 lg:col-span-1">
+              <p className="text-xl sm:text-2xl font-bold text-blue-700 dark:text-blue-400">
                 {student.fee_structure === '2_classes_700' ? '₹700' : '₹1000'}
               </p>
-              <p className="text-sm text-muted-foreground">Monthly Fee</p>
+              <p className="text-xs sm:text-sm text-muted-foreground">Monthly Fee</p>
             </div>
           </div>
 
           <Collapsible>
-            <CollapsibleTrigger className="flex items-center gap-2 font-semibold text-sm mb-2 hover:text-primary">
+            <CollapsibleTrigger className="flex items-center gap-2 font-semibold text-xs sm:text-sm mb-2 hover:text-primary">
               <ChevronDown className="h-4 w-4" />
               Fee History
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <div className="border rounded-lg overflow-hidden">
+              <div className="border rounded-lg overflow-x-auto">
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -548,25 +548,25 @@ const StudentProfile = () => {
       {/* Belt Test & Certification History */}
       <Card className="shadow-card">
         <CardHeader>
-          <CardTitle>Belt Progress & Certification History</CardTitle>
+          <CardTitle className="text-lg sm:text-xl">Belt Progress & Certification History</CardTitle>
         </CardHeader>
         <CardContent>
           {lastBeltTest && (
-            <div className="mb-6 p-4 rounded-lg bg-muted/50">
-              <h3 className="font-semibold mb-3">Last Belt Test Details</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="mb-4 sm:mb-6 p-3 sm:p-4 rounded-lg bg-muted/50">
+              <h3 className="font-semibold text-sm sm:text-base mb-2 sm:mb-3">Last Belt Test Details</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <div>
-                  <p className="text-sm text-muted-foreground">Test Date</p>
-                  <p className="font-semibold">
+                  <p className="text-xs sm:text-sm text-muted-foreground">Test Date</p>
+                  <p className="font-semibold text-sm sm:text-base">
                     {new Date(lastBeltTest.test_date).toLocaleDateString('en-GB')}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Tested For</p>
-                  <p className="font-semibold">{formatBeltName(lastBeltTest.tested_for_belt)}</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Tested For</p>
+                  <p className="font-semibold text-sm sm:text-base">{formatBeltName(lastBeltTest.tested_for_belt)}</p>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Result</p>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Result</p>
                   <Badge
                     className={getStatusBadge(lastBeltTest.result)}
                     variant="secondary"
@@ -576,15 +576,15 @@ const StudentProfile = () => {
                 </div>
                 {lastBeltTest.certification_number && (
                   <div>
-                    <p className="text-sm text-muted-foreground">Certification Number</p>
-                    <p className="font-semibold">{lastBeltTest.certification_number}</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground">Certification Number</p>
+                    <p className="font-semibold text-sm sm:text-base break-all">{lastBeltTest.certification_number}</p>
                   </div>
                 )}
               </div>
             </div>
           )}
 
-          <div className="border rounded-lg overflow-hidden">
+          <div className="border rounded-lg overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -605,42 +605,44 @@ const StudentProfile = () => {
                 ) : (
                   beltTests.map((test) => (
                     <TableRow key={test.id}>
-                      <TableCell>
+                      <TableCell className="min-w-[120px]">
                         <Badge
-                          className={getBeltColor(test.tested_for_belt)}
+                          className={`${getBeltColor(test.tested_for_belt)} text-xs sm:text-sm`}
                           variant="secondary"
                         >
                           {formatBeltName(test.tested_for_belt)}
                         </Badge>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="min-w-[100px] text-xs sm:text-sm">
                         {new Date(test.test_date).toLocaleDateString('en-GB')}
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="min-w-[90px]">
                         <Badge
-                          className={getStatusBadge(test.result)}
+                          className={`${getStatusBadge(test.result)} text-xs sm:text-sm`}
                           variant="secondary"
                         >
                           {test.result.charAt(0).toUpperCase() + test.result.slice(1)}
                         </Badge>
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="min-w-[150px]">
                         <input
                           type="text"
                           value={editingCertNumber[test.id] || ""}
                           onChange={(e) => handleCertNumberChange(test.id, e.target.value)}
                           placeholder="Enter cert number"
-                          className="w-full px-2 py-1 border rounded text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-background"
+                          className="w-full px-2 py-1 border rounded text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-primary bg-background"
                           maxLength={20}
                         />
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="min-w-[100px]">
                         <Button
                           size="sm"
                           onClick={() => handleSaveCertNumber(test.id)}
                           disabled={savingCertNumber[test.id]}
+                          className="w-full text-xs sm:text-sm"
                         >
-                          {savingCertNumber[test.id] ? "Saving..." : "Save"}
+                          <Save className="h-3 w-3 sm:mr-1" />
+                          <span className="hidden sm:inline">{savingCertNumber[test.id] ? "Saving..." : "Save"}</span>
                         </Button>
                       </TableCell>
                     </TableRow>

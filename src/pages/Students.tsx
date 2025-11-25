@@ -80,15 +80,15 @@ const Students = () => {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         <div>
-          <h1 className="text-3xl font-bold">Students</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl sm:text-3xl font-bold">Students</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">
             Manage student records and profiles
           </p>
         </div>
-        <Button onClick={handleAdd} className="gap-2">
+        <Button onClick={handleAdd} className="gap-2 w-full sm:w-auto">
           <Plus className="h-4 w-4" />
           Add Student
         </Button>
@@ -96,7 +96,7 @@ const Students = () => {
 
       <Card className="shadow-card">
         <CardHeader>
-          <CardTitle>Search Students</CardTitle>
+          <CardTitle className="text-lg sm:text-xl">Search Students</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="relative">
@@ -111,7 +111,7 @@ const Students = () => {
         </CardContent>
       </Card>
 
-      <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-fr">
+      <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 auto-rows-fr">
         {filteredStudents.map((student) => (
           <StudentCard
             key={student.id}
