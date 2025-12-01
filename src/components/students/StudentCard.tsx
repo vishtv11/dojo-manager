@@ -126,6 +126,11 @@ const StudentCard = ({ student, onEdit, onDelete }: StudentCardProps) => {
         </div>
 
         <div className="space-y-2 text-xs sm:text-sm flex-1">
+          {student.registration_number && (
+            <p className="text-muted-foreground">
+              Reg No: <span className="font-medium text-primary">{student.registration_number}</span>
+            </p>
+          )}
           <div className="flex items-center gap-2 text-muted-foreground">
             <Phone className="h-4 w-4 flex-shrink-0" />
             <span className="truncate">{student.phone_number}</span>

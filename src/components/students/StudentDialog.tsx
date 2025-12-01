@@ -130,6 +130,16 @@ const StudentDialog = ({ open, student, onClose }: StudentDialogProps) => {
         photoUrl = publicUrl;
       }
 
+      // Generate registration number for new students: MTA + DOB (DDMMYYYY)
+      let registrationNumber = student?.registration_number || null;
+      if (!student) {
+        const dobDate = new Date(validatedData.date_of_birth);
+        const day = dobDate.getDate().toString().padStart(2, '0');
+        const month = (dobDate.getMonth() + 1).toString().padStart(2, '0');
+        const year = dobDate.getFullYear();
+        registrationNumber = `MTA${day}${month}${year}`;
+      }
+
       const studentData = {
         name: validatedData.name,
         age: validatedData.age,
@@ -146,6 +156,7 @@ const StudentDialog = ({ open, student, onClose }: StudentDialogProps) => {
         is_active: true,
         fee_structure: validatedData.fee_structure as Database['public']['Enums']['fee_structure'],
         date_of_birth: validatedData.date_of_birth,
+        registration_number: registrationNumber,
       };
 
       if (student) {

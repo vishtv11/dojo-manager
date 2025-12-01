@@ -303,6 +303,12 @@ const StudentProfile = () => {
                 <p className="text-xs sm:text-sm text-muted-foreground">Student Name</p>
                 <p className="font-semibold text-base sm:text-lg break-words">{student.name}</p>
               </div>
+              {student.registration_number && (
+                <div>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Registration Number</p>
+                  <p className="font-semibold text-base sm:text-lg text-primary break-words">{student.registration_number}</p>
+                </div>
+              )}
               <div>
                 <p className="text-xs sm:text-sm text-muted-foreground">Gender</p>
                 <p className="font-semibold text-sm sm:text-base capitalize">{student.gender}</p>
