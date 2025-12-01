@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, DollarSign, Calendar, Award } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { Link } from "react-router-dom";
 
 interface DashboardStats {
   totalStudents: number;
@@ -175,38 +176,38 @@ const Dashboard = () => {
         </CardHeader>
         <CardContent>
           <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-            <a
-              href="/students"
+            <Link
+              to="/students"
               className="p-4 border border-border rounded-lg hover:border-primary hover:bg-accent/10 transition-colors text-center"
             >
               <Users className="h-8 w-8 mx-auto mb-2 text-primary" />
               <h3 className="font-semibold">Manage Students</h3>
               <p className="text-sm text-muted-foreground">Add or edit student records</p>
-            </a>
-            <a
-              href="/fees"
+            </Link>
+            <Link
+              to="/fees"
               className="p-4 border border-border rounded-lg hover:border-primary hover:bg-accent/10 transition-colors text-center"
             >
               <DollarSign className="h-8 w-8 mx-auto mb-2 text-primary" />
               <h3 className="font-semibold">Track Fees</h3>
               <p className="text-sm text-muted-foreground">Manage monthly payments</p>
-            </a>
-            <a
-              href="/attendance"
+            </Link>
+            <Link
+              to="/attendance"
               className="p-4 border border-border rounded-lg hover:border-primary hover:bg-accent/10 transition-colors text-center"
             >
               <Calendar className="h-8 w-8 mx-auto mb-2 text-primary" />
               <h3 className="font-semibold">Mark Attendance</h3>
               <p className="text-sm text-muted-foreground">Track daily attendance</p>
-            </a>
-            <a
-              href="/belt-tests"
+            </Link>
+            <Link
+              to="/belt-tests"
               className="p-4 border border-border rounded-lg hover:border-primary hover:bg-accent/10 transition-colors text-center"
             >
               <Award className="h-8 w-8 mx-auto mb-2 text-primary" />
               <h3 className="font-semibold">Belt Tests</h3>
               <p className="text-sm text-muted-foreground">Schedule and record tests</p>
-            </a>
+            </Link>
           </div>
         </CardContent>
       </Card>

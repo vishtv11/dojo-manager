@@ -160,6 +160,7 @@ export type Database = {
           name: string
           phone_number: string
           profile_photo_url: string | null
+          registration_number: string | null
           state: string | null
           tai_certification_number: string | null
           updated_at: string | null
@@ -180,6 +181,7 @@ export type Database = {
           name: string
           phone_number: string
           profile_photo_url?: string | null
+          registration_number?: string | null
           state?: string | null
           tai_certification_number?: string | null
           updated_at?: string | null
@@ -200,6 +202,7 @@ export type Database = {
           name?: string
           phone_number?: string
           profile_photo_url?: string | null
+          registration_number?: string | null
           state?: string | null
           tai_certification_number?: string | null
           updated_at?: string | null
