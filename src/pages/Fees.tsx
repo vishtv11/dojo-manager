@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle, XCircle, DollarSign } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Database } from "@/integrations/supabase/types";
+import { ExportFeesDialog } from "@/components/fees/ExportFeesDialog";
 
 const Fees = () => {
   const [fees, setFees] = useState<any[]>([]);
@@ -15,6 +17,7 @@ const Fees = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [loading, setLoading] = useState(true);
+  const [partialAmounts, setPartialAmounts] = useState<Record<string, number>>({});
   const { toast } = useToast();
   const { isAdmin } = useAuth();
 
@@ -88,13 +91,21 @@ const Fees = () => {
     }
   };
 
-  const updateFeeStatus = async (feeId: string, status: Database['public']['Enums']['payment_status'], amount: number) => {
+  const updateFeeStatus = async (feeId: string, status: Database['public']['Enums']['payment_status'], amount: number, partialAmount?: number) => {
     if (!isAdmin) return;
 
     try {
       const updateData: any = { status, amount };
+      
       if (status === "paid") {
         updateData.paid_date = new Date().toISOString().split("T")[0];
+        updateData.partial_amount_paid = 0; // Reset partial amount when fully paid
+      } else if (status === "partial" && partialAmount !== undefined) {
+        updateData.partial_amount_paid = partialAmount;
+        updateData.paid_date = null;
+      } else if (status === "unpaid") {
+        updateData.partial_amount_paid = 0;
+        updateData.paid_date = null;
       }
 
       const { error } = await supabase
@@ -110,10 +121,50 @@ const Fees = () => {
       });
 
       fetchFees();
+      setPartialAmounts(prev => {
+        const newAmounts = { ...prev };
+        delete newAmounts[feeId];
+        return newAmounts;
+      });
     } catch (error: any) {
       toast({
         title: "Error",
         description: "Failed to update fee",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const updatePartialAmount = async (feeId: string, partialAmount: number, totalAmount: number) => {
+    if (!isAdmin) return;
+
+    if (partialAmount < 0 || partialAmount >= totalAmount) {
+      toast({
+        title: "Invalid amount",
+        description: "Partial amount must be between 0 and the total fee amount.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from("monthly_fees")
+        .update({ partial_amount_paid: partialAmount })
+        .eq("id", feeId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Partial amount updated",
+        description: `Updated to ₹${partialAmount}`,
+      });
+
+      fetchFees();
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to update partial amount",
         variant: "destructive",
       });
     }
@@ -140,13 +191,19 @@ const Fees = () => {
     const amount = student?.fee_structure === '4_classes_1000' ? 1000 : 700;
     return sum + amount;
   }, 0);
-  const paidAmount = fees
-    .filter((f) => f.status === "paid")
-    .reduce((sum, fee) => {
-      const student = students.find((s) => s.id === fee.student_id);
-      const amount = student?.fee_structure === '4_classes_1000' ? 1000 : 700;
+  
+  const paidAmount = fees.reduce((sum, fee) => {
+    const student = students.find((s) => s.id === fee.student_id);
+    const amount = student?.fee_structure === '4_classes_1000' ? 1000 : 700;
+    
+    if (fee.status === "paid") {
       return sum + amount;
-    }, 0);
+    } else if (fee.status === "partial") {
+      return sum + (fee.partial_amount_paid || 0);
+    }
+    return sum;
+  }, 0);
+  
   const unpaidCount = fees.filter((f) => f.status === "unpaid").length;
 
   if (loading && fees.length === 0) {
@@ -210,7 +267,14 @@ const Fees = () => {
 
       <Card className="shadow-card">
         <CardHeader>
-          <CardTitle className="text-lg sm:text-xl">Filter by Month & Year</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-lg sm:text-xl">Filter by Month & Year</CardTitle>
+            <ExportFeesDialog 
+              students={students}
+              selectedMonth={selectedMonth}
+              selectedYear={selectedYear}
+            />
+          </div>
         </CardHeader>
         <CardContent>
           <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2">
@@ -257,39 +321,77 @@ const Fees = () => {
               if (!student) return null;
 
               const feeAmount = student.fee_structure === '4_classes_1000' ? 1000 : 700;
+              const partialPaid = fee.partial_amount_paid || 0;
+              const remaining = fee.status === 'partial' ? feeAmount - partialPaid : (fee.status === 'paid' ? 0 : feeAmount);
               
               return (
                 <div
                   key={fee.id}
-                  className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-3 sm:p-4 border border-border rounded-lg hover:bg-accent/10 transition-colors"
+                  className="flex flex-col gap-3 p-3 sm:p-4 border border-border rounded-lg hover:bg-accent/10 transition-colors"
                 >
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-sm sm:text-base truncate">{student.name}</h3>
-                    <p className="text-xs sm:text-sm text-muted-foreground">
-                      Amount: ₹{feeAmount.toFixed(2)}
-                      {fee.paid_date && ` • Paid on ${new Date(fee.paid_date).toLocaleDateString()}`}
-                    </p>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-sm sm:text-base truncate">{student.name}</h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground">
+                        Total Amount: ₹{feeAmount.toFixed(2)}
+                        {fee.status === 'partial' && ` • Paid: ₹${partialPaid.toFixed(2)} • Remaining: ₹${remaining.toFixed(2)}`}
+                        {fee.paid_date && ` • Paid on ${new Date(fee.paid_date).toLocaleDateString()}`}
+                      </p>
+                    </div>
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
+                      <Badge className={getStatusBadge(fee.status)} variant="outline">
+                        {fee.status.charAt(0).toUpperCase() + fee.status.slice(1)}
+                      </Badge>
+                      {isAdmin && (
+                        <Select
+                          value={fee.status}
+                          onValueChange={(value) => {
+                            const newStatus = value as Database['public']['Enums']['payment_status'];
+                            if (newStatus === 'partial') {
+                              const currentPartial = partialAmounts[fee.id] || partialPaid || 0;
+                              setPartialAmounts(prev => ({ ...prev, [fee.id]: currentPartial }));
+                            }
+                            updateFeeStatus(fee.id, newStatus, feeAmount, partialAmounts[fee.id]);
+                          }}
+                        >
+                          <SelectTrigger className="w-full sm:w-32">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="unpaid">Unpaid</SelectItem>
+                            <SelectItem value="paid">Paid</SelectItem>
+                            <SelectItem value="partial">Partial</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3">
-                    <Badge className={getStatusBadge(fee.status)} variant="outline">
-                      {fee.status.charAt(0).toUpperCase() + fee.status.slice(1)}
-                    </Badge>
-                    {isAdmin && (
-                      <Select
-                        value={fee.status}
-                        onValueChange={(value) => updateFeeStatus(fee.id, value as Database['public']['Enums']['payment_status'], feeAmount)}
+                  
+                  {fee.status === 'partial' && isAdmin && (
+                    <div className="flex items-center gap-2 pt-2 border-t border-border">
+                      <Input
+                        type="number"
+                        placeholder="Enter partial amount"
+                        value={partialAmounts[fee.id] !== undefined ? partialAmounts[fee.id] : partialPaid}
+                        onChange={(e) => {
+                          const value = parseFloat(e.target.value) || 0;
+                          setPartialAmounts(prev => ({ ...prev, [fee.id]: value }));
+                        }}
+                        className="flex-1"
+                        min={0}
+                        max={feeAmount}
+                      />
+                      <Button
+                        size="sm"
+                        onClick={() => {
+                          const amount = partialAmounts[fee.id] !== undefined ? partialAmounts[fee.id] : partialPaid;
+                          updatePartialAmount(fee.id, amount, feeAmount);
+                        }}
                       >
-                        <SelectTrigger className="w-full sm:w-32">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="unpaid">Unpaid</SelectItem>
-                          <SelectItem value="paid">Paid</SelectItem>
-                          <SelectItem value="partial">Partial</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    )}
-                  </div>
+                        Update
+                      </Button>
+                    </div>
+                  )}
                 </div>
               );
             })}

@@ -104,6 +104,7 @@ export type Database = {
           month: number
           notes: string | null
           paid_date: string | null
+          partial_amount_paid: number | null
           status: Database["public"]["Enums"]["payment_status"]
           student_id: string
           updated_at: string | null
@@ -116,6 +117,7 @@ export type Database = {
           month: number
           notes?: string | null
           paid_date?: string | null
+          partial_amount_paid?: number | null
           status?: Database["public"]["Enums"]["payment_status"]
           student_id: string
           updated_at?: string | null
@@ -128,6 +130,7 @@ export type Database = {
           month?: number
           notes?: string | null
           paid_date?: string | null
+          partial_amount_paid?: number | null
           status?: Database["public"]["Enums"]["payment_status"]
           student_id?: string
           updated_at?: string | null
