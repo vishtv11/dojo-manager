@@ -4,9 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, User, Phone, MapPin, Calendar, Award, GraduationCap, Save } from "lucide-react";
+import { ArrowLeft, User, Phone, MapPin, Calendar, Award, GraduationCap, Save, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 import {
   Table,
   TableBody,
@@ -240,6 +242,235 @@ const StudentProfile = () => {
     return styles[status] || "";
   };
 
+  const exportToPDF = () => {
+    try {
+      const doc = new jsPDF();
+      const pageWidth = doc.internal.pageSize.getWidth();
+      let yPosition = 20;
+
+      // Title
+      doc.setFontSize(20);
+      doc.setFont("helvetica", "bold");
+      doc.text("Student Profile Report", pageWidth / 2, yPosition, { align: "center" });
+      yPosition += 15;
+
+      // Basic Information Section
+      doc.setFontSize(14);
+      doc.setFont("helvetica", "bold");
+      doc.text("Basic Information", 14, yPosition);
+      yPosition += 8;
+
+      doc.setFontSize(10);
+      doc.setFont("helvetica", "normal");
+      const basicInfo = [
+        ["Student Name:", student.name],
+        ["Registration Number:", student.registration_number || "N/A"],
+        ["Gender:", student.gender.charAt(0).toUpperCase() + student.gender.slice(1)],
+        ["Date of Birth:", new Date(student.date_of_birth).toLocaleDateString('en-GB')],
+        ["Age:", `${student.age} years`],
+        ["Guardian Name:", student.guardian_name],
+        ["Phone Number:", student.phone_number],
+        ["Address:", student.address || "Not provided"],
+        ["State:", student.state || "N/A"],
+        ["Admission Date:", new Date(student.admission_date).toLocaleDateString('en-GB')],
+        ["Current Belt:", formatBeltName(student.current_belt)],
+        ["Instructor Name:", student.instructor_name || "N/A"],
+        ["TAI Certification:", student.tai_certification_number || "N/A"],
+        ["Fee Structure:", student.fee_structure === '2_classes_700' ? '2 classes/week - ₹700' : '4 classes/week - ₹1000'],
+      ];
+
+      basicInfo.forEach(([label, value]) => {
+        doc.setFont("helvetica", "bold");
+        doc.text(label, 14, yPosition);
+        doc.setFont("helvetica", "normal");
+        doc.text(value, 70, yPosition);
+        yPosition += 6;
+      });
+
+      yPosition += 5;
+
+      // Attendance Overview Section
+      doc.setFontSize(14);
+      doc.setFont("helvetica", "bold");
+      doc.text("Attendance Overview", 14, yPosition);
+      yPosition += 8;
+
+      autoTable(doc, {
+        startY: yPosition,
+        head: [['Metric', 'Value']],
+        body: [
+          ['Total Present Days', attendanceStats.present.toString()],
+          ['Total Absent Days', attendanceStats.absent.toString()],
+          ['Total Classes', attendanceStats.total.toString()],
+          ['Attendance Percentage', `${attendanceStats.percentage.toFixed(2)}%`],
+        ],
+        theme: 'grid',
+        headStyles: { fillColor: [220, 38, 38], textColor: 255 },
+        styles: { fontSize: 10 },
+      });
+
+      yPosition = (doc as any).lastAutoTable.finalY + 10;
+
+      // Attendance History
+      if (attendanceData.length > 0) {
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "bold");
+        doc.text("Attendance History", 14, yPosition);
+        yPosition += 5;
+
+        autoTable(doc, {
+          startY: yPosition,
+          head: [['Date', 'Status', 'Notes']],
+          body: attendanceData.map(record => [
+            new Date(record.date).toLocaleDateString('en-GB'),
+            record.status.charAt(0).toUpperCase() + record.status.slice(1),
+            record.notes || '-'
+          ]),
+          theme: 'striped',
+          headStyles: { fillColor: [220, 38, 38], textColor: 255 },
+          styles: { fontSize: 9 },
+        });
+
+        yPosition = (doc as any).lastAutoTable.finalY + 10;
+      }
+
+      // Check if we need a new page
+      if (yPosition > 250) {
+        doc.addPage();
+        yPosition = 20;
+      }
+
+      // Fee Summary Section
+      doc.setFontSize(14);
+      doc.setFont("helvetica", "bold");
+      doc.text("Fee Summary", 14, yPosition);
+      yPosition += 8;
+
+      autoTable(doc, {
+        startY: yPosition,
+        head: [['Metric', 'Value']],
+        body: [
+          ['Total Paid', `₹${feeStats.totalPaid.toFixed(2)}`],
+          ['Total Pending', `₹${feeStats.totalPending.toFixed(2)}`],
+          ['Monthly Fee', student.fee_structure === '2_classes_700' ? '₹700' : '₹1000'],
+        ],
+        theme: 'grid',
+        headStyles: { fillColor: [220, 38, 38], textColor: 255 },
+        styles: { fontSize: 10 },
+      });
+
+      yPosition = (doc as any).lastAutoTable.finalY + 10;
+
+      // Fee History
+      if (feeData.length > 0) {
+        doc.setFontSize(12);
+        doc.setFont("helvetica", "bold");
+        doc.text("Fee History", 14, yPosition);
+        yPosition += 5;
+
+        autoTable(doc, {
+          startY: yPosition,
+          head: [['Month/Year', 'Amount', 'Status', 'Payment Date']],
+          body: feeData.map(fee => [
+            `${getMonthName(fee.month)} ${fee.year}`,
+            `₹${Number(fee.amount).toFixed(2)}`,
+            fee.status.charAt(0).toUpperCase() + fee.status.slice(1),
+            fee.paid_date ? new Date(fee.paid_date).toLocaleDateString('en-GB') : '-'
+          ]),
+          theme: 'striped',
+          headStyles: { fillColor: [220, 38, 38], textColor: 255 },
+          styles: { fontSize: 9 },
+        });
+
+        yPosition = (doc as any).lastAutoTable.finalY + 10;
+      }
+
+      // Check if we need a new page
+      if (yPosition > 250) {
+        doc.addPage();
+        yPosition = 20;
+      }
+
+      // Belt Progress & Certification History
+      doc.setFontSize(14);
+      doc.setFont("helvetica", "bold");
+      doc.text("Belt Progress & Certification History", 14, yPosition);
+      yPosition += 8;
+
+      if (lastBeltTest) {
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "bold");
+        doc.text("Last Belt Test:", 14, yPosition);
+        yPosition += 6;
+
+        doc.setFontSize(10);
+        doc.setFont("helvetica", "normal");
+        doc.text(`Date: ${new Date(lastBeltTest.test_date).toLocaleDateString('en-GB')}`, 14, yPosition);
+        yPosition += 5;
+        doc.text(`Tested For: ${formatBeltName(lastBeltTest.tested_for_belt)}`, 14, yPosition);
+        yPosition += 5;
+        doc.text(`Result: ${lastBeltTest.result.charAt(0).toUpperCase() + lastBeltTest.result.slice(1)}`, 14, yPosition);
+        yPosition += 5;
+        if (lastBeltTest.certification_number) {
+          doc.text(`Certification: ${lastBeltTest.certification_number}`, 14, yPosition);
+          yPosition += 5;
+        }
+        yPosition += 5;
+      }
+
+      if (beltTests.length > 0) {
+        autoTable(doc, {
+          startY: yPosition,
+          head: [['Belt Level', 'Date Issued', 'Result', 'Certification Number']],
+          body: beltTests.map(test => [
+            formatBeltName(test.tested_for_belt),
+            new Date(test.test_date).toLocaleDateString('en-GB'),
+            test.result.charAt(0).toUpperCase() + test.result.slice(1),
+            test.certification_number || '-'
+          ]),
+          theme: 'striped',
+          headStyles: { fillColor: [220, 38, 38], textColor: 255 },
+          styles: { fontSize: 9 },
+        });
+      }
+
+      // Footer
+      const totalPages = doc.getNumberOfPages();
+      for (let i = 1; i <= totalPages; i++) {
+        doc.setPage(i);
+        doc.setFontSize(8);
+        doc.setFont("helvetica", "italic");
+        doc.text(
+          `Page ${i} of ${totalPages}`,
+          pageWidth / 2,
+          doc.internal.pageSize.getHeight() - 10,
+          { align: "center" }
+        );
+        doc.text(
+          `Generated on ${new Date().toLocaleDateString('en-GB')}`,
+          pageWidth - 14,
+          doc.internal.pageSize.getHeight() - 10,
+          { align: "right" }
+        );
+      }
+
+      // Save the PDF
+      const fileName = `${student.name.replace(/\s+/g, '_')}_ProfileReport.pdf`;
+      doc.save(fileName);
+
+      toast({
+        title: "Success",
+        description: "Student profile exported successfully",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: "Failed to export PDF",
+        variant: "destructive",
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="space-y-6">
@@ -265,10 +496,16 @@ const StudentProfile = () => {
     <div className="space-y-4 sm:space-y-6">
       {/* Header with Back Button */}
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-        <Button variant="outline" size="sm" onClick={() => navigate("/students")} className="w-full sm:w-auto">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Students
-        </Button>
+        <div className="flex gap-2 flex-col sm:flex-row">
+          <Button variant="outline" size="sm" onClick={() => navigate("/students")} className="w-full sm:w-auto">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Students
+          </Button>
+          <Button variant="default" size="sm" onClick={exportToPDF} className="w-full sm:w-auto">
+            <Download className="h-4 w-4 mr-2" />
+            Export PDF
+          </Button>
+        </div>
         <div className="flex-1">
           <h1 className="text-2xl sm:text-3xl font-bold">Student Profile</h1>
           <p className="text-xs sm:text-sm text-muted-foreground">
