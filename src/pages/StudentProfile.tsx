@@ -272,17 +272,57 @@ const StudentProfile = () => {
     return styles[status] || "";
   };
 
-  const exportToPDF = () => {
+  const exportToPDF = async () => {
     try {
       const doc = new jsPDF();
       const pageWidth = doc.internal.pageSize.getWidth();
-      let yPosition = 20;
+      let yPosition = 15;
 
-      // Title
-      doc.setFontSize(20);
-      doc.setFont("helvetica", "bold");
-      doc.text("Student Profile Report", pageWidth / 2, yPosition, { align: "center" });
-      yPosition += 15;
+      // Load and add logo
+      const loadImage = (url: string): Promise<string> => {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.crossOrigin = "anonymous";
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext("2d");
+            ctx?.drawImage(img, 0, 0);
+            resolve(canvas.toDataURL("image/jpeg"));
+          };
+          img.onerror = reject;
+          img.src = url;
+        });
+      };
+
+      try {
+        const logoBase64 = await loadImage("/images/mta-logo.jpeg");
+        const logoWidth = 30;
+        const logoHeight = 30;
+        doc.addImage(logoBase64, "JPEG", 14, yPosition, logoWidth, logoHeight);
+        
+        // Title next to logo
+        doc.setFontSize(16);
+        doc.setFont("helvetica", "bold");
+        doc.text("Master's Taekwon-Do Academy", 50, yPosition + 12);
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "normal");
+        doc.text("Student Profile Report", 50, yPosition + 20);
+        yPosition += 40;
+      } catch (imgError) {
+        // Fallback if logo fails to load
+        doc.setFontSize(20);
+        doc.setFont("helvetica", "bold");
+        doc.text("Student Profile Report", pageWidth / 2, yPosition, { align: "center" });
+        yPosition += 15;
+      }
+
+      // Separator line
+      doc.setDrawColor(220, 38, 38);
+      doc.setLineWidth(0.5);
+      doc.line(14, yPosition, pageWidth - 14, yPosition);
+      yPosition += 10;
 
       // Basic Information Section
       doc.setFontSize(14);
