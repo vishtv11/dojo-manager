@@ -306,7 +306,7 @@ const StudentProfile = () => {
         ["Current Belt:", formatBeltName(student.current_belt)],
         ["Instructor Name:", student.instructor_name || "N/A"],
         ["TAI Certification:", student.tai_certification_number || "N/A"],
-        ["Fee Structure:", student.fee_structure === '2_classes_700' ? '2 classes/week - ₹700' : '4 classes/week - ₹1000'],
+        ["Fee Structure:", student.fee_structure === '2_classes_700' ? '2 classes/week - Rs.700' : '4 classes/week - Rs.1000'],
       ];
 
       basicInfo.forEach(([label, value]) => {
@@ -380,9 +380,9 @@ const StudentProfile = () => {
         startY: yPosition,
         head: [['Metric', 'Value']],
         body: [
-          ['Total Paid', `₹${feeStats.totalPaid.toFixed(2)}`],
-          ['Total Pending', `₹${feeStats.totalPending.toFixed(2)}`],
-          ['Monthly Fee', student.fee_structure === '2_classes_700' ? '₹700' : '₹1000'],
+          ['Total Paid', `Rs.${feeStats.totalPaid.toFixed(2)}`],
+          ['Total Pending', `Rs.${feeStats.totalPending.toFixed(2)}`],
+          ['Monthly Fee', student.fee_structure === '2_classes_700' ? 'Rs.700' : 'Rs.1000'],
         ],
         theme: 'grid',
         headStyles: { fillColor: [220, 38, 38], textColor: 255 },
@@ -403,7 +403,7 @@ const StudentProfile = () => {
           head: [['Month/Year', 'Amount', 'Status', 'Payment Date']],
           body: feeData.map(fee => [
             `${getMonthName(fee.month)} ${fee.year}`,
-            `₹${Number(fee.amount).toFixed(2)}`,
+            `Rs.${Number(fee.amount).toFixed(2)}`,
             fee.status.charAt(0).toUpperCase() + fee.status.slice(1),
             fee.paid_date ? new Date(fee.paid_date).toLocaleDateString('en-GB') : '-'
           ]),
