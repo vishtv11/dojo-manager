@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, XCircle, DollarSign } from "lucide-react";
+import { CheckCircle, XCircle, IndianRupee } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Database } from "@/integrations/supabase/types";
 import { ExportFeesDialog } from "@/components/fees/ExportFeesDialog";
@@ -230,7 +230,7 @@ const Fees = () => {
                 <p className="text-2xl font-bold">₹{totalAmount.toFixed(2)}</p>
               </div>
               <div className="p-3 bg-blue-100 rounded-lg">
-                <DollarSign className="h-6 w-6 text-blue-600" />
+                <IndianRupee className="h-6 w-6 text-blue-600" />
               </div>
             </div>
           </CardContent>
@@ -372,9 +372,9 @@ const Fees = () => {
                       <Input
                         type="number"
                         placeholder="Enter partial amount"
-                        value={partialAmounts[fee.id] !== undefined ? partialAmounts[fee.id] : partialPaid}
+                        value={partialAmounts[fee.id] !== undefined ? (partialAmounts[fee.id] === 0 && !partialPaid ? '' : partialAmounts[fee.id]) : (partialPaid || '')}
                         onChange={(e) => {
-                          const value = parseFloat(e.target.value) || 0;
+                          const value = e.target.value === '' ? 0 : parseFloat(e.target.value);
                           setPartialAmounts(prev => ({ ...prev, [fee.id]: value }));
                         }}
                         className="flex-1"
