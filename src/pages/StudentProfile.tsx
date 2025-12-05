@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, User, Phone, MapPin, Calendar, Award, GraduationCap, Save, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -32,10 +33,13 @@ const StudentProfile = () => {
   const [loading, setLoading] = useState(true);
   const [student, setStudent] = useState<any>(null);
   const [attendanceData, setAttendanceData] = useState<any[]>([]);
+  const [filteredAttendance, setFilteredAttendance] = useState<any[]>([]);
   const [feeData, setFeeData] = useState<any[]>([]);
   const [beltTests, setBeltTests] = useState<any[]>([]);
   const [editingCertNumber, setEditingCertNumber] = useState<Record<string, string>>({});
   const [savingCertNumber, setSavingCertNumber] = useState<Record<string, boolean>>({});
+  const [attendanceMonth, setAttendanceMonth] = useState<string>("all");
+  const [attendanceYear, setAttendanceYear] = useState<string>(new Date().getFullYear().toString());
   const [attendanceStats, setAttendanceStats] = useState({
     present: 0,
     absent: 0,
@@ -52,6 +56,32 @@ const StudentProfile = () => {
       fetchStudentProfile();
     }
   }, [id]);
+
+  // Filter attendance based on month/year selection
+  useEffect(() => {
+    if (attendanceMonth === "all") {
+      setFilteredAttendance(attendanceData);
+      const present = attendanceData.filter((a) => a.status === "present").length;
+      const absent = attendanceData.filter((a) => a.status === "absent").length;
+      const total = attendanceData.length;
+      const percentage = total > 0 ? (present / total) * 100 : 0;
+      setAttendanceStats({ present, absent, total, percentage });
+    } else {
+      const filtered = attendanceData.filter((record) => {
+        const recordDate = new Date(record.date);
+        return (
+          recordDate.getMonth() + 1 === parseInt(attendanceMonth) &&
+          recordDate.getFullYear() === parseInt(attendanceYear)
+        );
+      });
+      setFilteredAttendance(filtered);
+      const present = filtered.filter((a) => a.status === "present").length;
+      const absent = filtered.filter((a) => a.status === "absent").length;
+      const total = filtered.length;
+      const percentage = total > 0 ? (present / total) * 100 : 0;
+      setAttendanceStats({ present, absent, total, percentage });
+    }
+  }, [attendanceMonth, attendanceYear, attendanceData]);
 
   const fetchStudentProfile = async () => {
     try {
@@ -627,7 +657,41 @@ const StudentProfile = () => {
       {/* Attendance Overview */}
       <Card className="shadow-card">
         <CardHeader>
-          <CardTitle className="text-lg sm:text-xl">Attendance Overview</CardTitle>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <CardTitle className="text-lg sm:text-xl">Attendance Overview</CardTitle>
+            <div className="flex gap-2">
+              <Select value={attendanceMonth} onValueChange={setAttendanceMonth}>
+                <SelectTrigger className="w-[120px]">
+                  <SelectValue placeholder="Month" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Months</SelectItem>
+                  <SelectItem value="1">January</SelectItem>
+                  <SelectItem value="2">February</SelectItem>
+                  <SelectItem value="3">March</SelectItem>
+                  <SelectItem value="4">April</SelectItem>
+                  <SelectItem value="5">May</SelectItem>
+                  <SelectItem value="6">June</SelectItem>
+                  <SelectItem value="7">July</SelectItem>
+                  <SelectItem value="8">August</SelectItem>
+                  <SelectItem value="9">September</SelectItem>
+                  <SelectItem value="10">October</SelectItem>
+                  <SelectItem value="11">November</SelectItem>
+                  <SelectItem value="12">December</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={attendanceYear} onValueChange={setAttendanceYear}>
+                <SelectTrigger className="w-[100px]">
+                  <SelectValue placeholder="Year" />
+                </SelectTrigger>
+                <SelectContent>
+                  {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - 2 + i).map((year) => (
+                    <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
@@ -673,14 +737,14 @@ const StudentProfile = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {attendanceData.length === 0 ? (
+                    {filteredAttendance.length === 0 ? (
                       <TableRow>
                         <TableCell colSpan={3} className="text-center text-muted-foreground">
                           No attendance records found
                         </TableCell>
                       </TableRow>
                     ) : (
-                      attendanceData.map((record) => (
+                      filteredAttendance.map((record) => (
                         <TableRow key={record.id}>
                           <TableCell>
                             {new Date(record.date).toLocaleDateString('en-GB')}
