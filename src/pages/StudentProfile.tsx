@@ -273,6 +273,12 @@ const StudentProfile = () => {
   };
 
   const exportToPDF = async () => {
+    // Get the latest TAI certification number from belt history for PDF
+    const latestCertForPDF = beltTests
+      .filter((test) => test.result === "passed" && test.certification_number)
+      .sort((a, b) => new Date(b.test_date).getTime() - new Date(a.test_date).getTime())[0]?.certification_number 
+      || student.tai_certification_number || null;
+    
     try {
       const doc = new jsPDF();
       const pageWidth = doc.internal.pageSize.getWidth();
@@ -345,7 +351,7 @@ const StudentProfile = () => {
         ["Admission Date:", new Date(student.admission_date).toLocaleDateString('en-GB')],
         ["Current Belt:", formatBeltName(student.current_belt)],
         ["Instructor Name:", student.instructor_name || "N/A"],
-        ["TAI Certification:", student.tai_certification_number || "N/A"],
+        ["Latest TAI Certification:", latestCertForPDF || "N/A"],
         ["Fee Structure:", student.fee_structure === '2_classes_700' ? '2 classes/week - Rs.700' : '4 classes/week - Rs.1000'],
       ];
 
@@ -561,6 +567,11 @@ const StudentProfile = () => {
 
   const lastBeltTest = beltTests.length > 0 ? beltTests[0] : null;
   const passedTests = beltTests.filter((test) => test.result === "passed");
+  
+  // Get the latest TAI certification number from belt history (most recent passed test with certification)
+  const latestTAICertification = beltTests
+    .filter((test) => test.result === "passed" && test.certification_number)
+    .sort((a, b) => new Date(b.test_date).getTime() - new Date(a.test_date).getTime())[0]?.certification_number || null;
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -672,15 +683,15 @@ const StudentProfile = () => {
                   <p className="font-semibold text-sm sm:text-base">{student.instructor_name}</p>
                 </div>
               )}
-              {student.tai_certification_number && (
-                <div>
-                  <p className="text-xs sm:text-sm text-muted-foreground flex items-center gap-2">
-                    <Award className="h-3 w-3 sm:h-4 sm:w-4" />
-                    Latest TAI Certification
-                  </p>
-                  <p className="font-semibold text-sm sm:text-base break-all">{student.tai_certification_number}</p>
-                </div>
-              )}
+              <div>
+                <p className="text-xs sm:text-sm text-muted-foreground flex items-center gap-2">
+                  <Award className="h-3 w-3 sm:h-4 sm:w-4" />
+                  Latest TAI Certification
+                </p>
+                <p className="font-semibold text-sm sm:text-base break-all">
+                  {latestTAICertification || student.tai_certification_number || "N/A"}
+                </p>
+              </div>
               <div>
                 <p className="text-xs sm:text-sm text-muted-foreground">Fee Structure</p>
                 <p className="font-semibold text-sm sm:text-base">
