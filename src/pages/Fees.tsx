@@ -10,6 +10,7 @@ import { CheckCircle, XCircle, IndianRupee } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Database } from "@/integrations/supabase/types";
 import { ExportFeesDialog } from "@/components/fees/ExportFeesDialog";
+import { InvoiceDialog } from "@/components/fees/InvoiceDialog";
 
 const Fees = () => {
   const [fees, setFees] = useState<any[]>([]);
@@ -342,6 +343,7 @@ const Fees = () => {
                       <Badge className={getStatusBadge(fee.status)} variant="outline">
                         {fee.status.charAt(0).toUpperCase() + fee.status.slice(1)}
                       </Badge>
+                      <InvoiceDialog fee={fee} student={student} />
                       {isAdmin && (
                         <Select
                           value={fee.status}
